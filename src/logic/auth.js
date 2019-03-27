@@ -4,6 +4,7 @@ import AuthApi from '../api/auth';
 import UserApi from '../api/user';
 import UserDao from '../dao/user';
 import Config from '../config/config';
+import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
  * Logic for auth part.
@@ -11,7 +12,7 @@ import Config from '../config/config';
 export default class AuthLogic {
   /**
    * @description
-   * Constructor.
+   * The constructor.
    *
    * @param {AuthApi} authApi - DeviantArt auth API.
    * @param {UserApi} userApi - DeviantArt user API.
@@ -52,18 +53,37 @@ export default class AuthLogic {
    * @returns {boolean} Success of operation.
    */
   async revoke(userId) {
-    const userInfo = await this.userDao.getById(userId);
+    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+    const result = await this.authApi.revoke(userInfo.refreshToken);
 
-    if (userInfo && Date.now() < userInfo.accessTokenExpires) {
-      const result = this.authApi.revoke(userInfo.accessToken);
+    if (result) {
+      userInfo.revoke();
+      await this.userDao.update(userInfo);
 
-      if (result) {
-        await this.userDao.deleteById(userId);
-
-        return true;
-      }
+      return true;
     }
 
     return false;
+  }
+
+  /**
+   * @description
+   * Refreshes user session.
+   *
+   * @param {string} userId - The user id.
+   * @returns {Object} Session data object.
+   */
+  async refresh(userId) {
+    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+    const refreshmentData = await this.authApi.refresh(
+      this.config.oauthKey,
+      this.config.oauthSecret,
+      userInfo.refreshToken,
+    );
+    userInfo.addRefreshmentData(refreshmentData, this.config);
+
+    await this.userDao.update(userInfo);
+
+    return UserInfoConverter.toSessionData(userInfo);
   }
 }

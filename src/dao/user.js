@@ -9,7 +9,7 @@ import UserInfoConverter from '../models/user-info/converter';
 export default class UserDao {
   /**
    * @description
-   * Constructor.
+   * The constructor.
    *
    * @param {Db} db - The database.
    */

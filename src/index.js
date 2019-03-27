@@ -1,4 +1,16 @@
+import { MongoClient } from 'mongodb';
 import config from './config';
 import application from './application';
 
-application(config).then(app => app.listen(config.port));
+const dbClient = new MongoClient(config.connectionString, {
+  useNewUrlParser: true,
+});
+
+dbClient
+  .connect()
+  .then((client) => {
+    const db = client.db(config.db);
+    application(db, config).listen(config.port);
+  }).catch((e) => {
+    console.error(e);
+  });

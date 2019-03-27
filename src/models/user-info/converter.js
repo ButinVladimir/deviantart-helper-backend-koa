@@ -14,7 +14,8 @@ export default class UserInfoConverter {
   static toSessionData(userInfo) {
     return {
       userId: userInfo.userId,
-      expires: userInfo.accessTokenExpires,
+      accessTokenExpires: userInfo.accessTokenExpires,
+      refreshTokenExpires: userInfo.refreshTokenExpires,
     };
   }
 
@@ -68,15 +69,13 @@ export default class UserInfoConverter {
    * @returns {Object} Object for client.
    */
   static toClientObject(userInfo) {
-    return userInfo
-      ? {
-        accessTokenExpires: userInfo.accessTokenExpires,
-        refreshTokenExpires: userInfo.refreshTokenExpires,
-        userId: userInfo.userId,
-        userName: userInfo.userName,
-        userIcon: userInfo.userIcon,
-        userType: userInfo.userType,
-      }
-      : null;
+    return {
+      accessTokenExpires: userInfo.accessTokenExpires,
+      refreshTokenExpires: userInfo.refreshTokenExpires,
+      userId: userInfo.userId,
+      userName: userInfo.userName,
+      userIcon: userInfo.userIcon,
+      userType: userInfo.userType,
+    };
   }
 }

@@ -2,7 +2,7 @@ import Koa from 'koa';
 import mount from 'koa-mount';
 import grant from 'grant-koa';
 import Router from 'koa-router';
-import authGuard from './auth-guard';
+import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
 import Config from '../config/config';
 import AuthLogic from '../logic/auth';
@@ -45,13 +45,14 @@ export default (authLogic, router, config, app) => {
         ctx.body = 'Callback data is missing';
       }
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
+      console.error(e.stack);
       ctx.throw(500);
     }
   });
 
   router.get(routes.AUTH_REVOKE,
-    authGuard,
+    refreshAuthGuard,
     async (ctx) => {
       try {
         const revokeResult = await authLogic.revoke(ctx.session.userId);
@@ -63,7 +64,26 @@ export default (authLogic, router, config, app) => {
           ctx.throw(500);
         }
       } catch (e) {
-        console.error(e);
+        console.error(e.message);
+        console.error(e.stack);
+        ctx.throw(500);
+      }
+    });
+
+  router.get(routes.AUTH_REFRESH,
+    refreshAuthGuard,
+    async (ctx) => {
+      try {
+        const session = await authLogic.refresh(ctx.session.userId);
+        if (session) {
+          Object.assign(ctx.session, session);
+          ctx.body = 'Refreshed';
+        } else {
+          ctx.body = 'Refreshment failed';
+        }
+      } catch (e) {
+        console.error(e.message);
+        console.error(e.stack);
         ctx.throw(500);
       }
     });

@@ -1,6 +1,7 @@
 import UserInfoConverter from '../models/user-info/converter';
 import UserApi from '../api/user';
 import UserDao from '../dao/user';
+import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
  * Logic for user part.
@@ -8,7 +9,7 @@ import UserDao from '../dao/user';
 export default class UserLogic {
   /**
    * @description
-   * Constructor.
+   * The constructor.
    *
    * @param {UserApi} userApi - DeviantArt user API.
    * @param {UserDao} userDao - User DAO.
@@ -26,12 +27,8 @@ export default class UserLogic {
    * @returns {Object} UserInfo instance.
    */
   async getClientInfo(userId) {
-    const userInfo = await this.userDao.getById(userId);
+    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
-    if (userInfo) {
-      return UserInfoConverter.toClientObject(userInfo);
-    }
-
-    return null;
+    return UserInfoConverter.toClientObject(userInfo);
   }
 }

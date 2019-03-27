@@ -10,6 +10,8 @@ const config = new Config(
   'oauthSecret', // DeviantArt OAuth secret
   'path/to/server/connect/deviantart/callback', // DeviantArt OAuth callback URI
   80 * 24 * 60 * 60 * 1000, // DeviantArt OAuth refresh token window
+  10, // Limit of deviations per page got from DeviantArt API, 1-24
+  30, // Limit of deviations per page got from DAO
   ENVIRONMENT_DEVELOPMENT, // Environment
 );
 

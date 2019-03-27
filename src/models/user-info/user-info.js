@@ -4,6 +4,10 @@ import Config from '../../config/config';
  * User info object.
  */
 export default class UserInfo {
+  /**
+   * @description
+   * The constructor.
+   */
   constructor() {
     this.accessToken = '';
     this.refreshToken = '';
@@ -40,5 +44,30 @@ export default class UserInfo {
     this.userName = whoAmIData.username;
     this.userIcon = whoAmIData.usericon;
     this.userType = whoAmIData.type;
+  }
+
+  /**
+   * @description
+   * Adds refreshment data.
+   *
+   * @param {Object} refreshmentData - Data from DeviantArt API.
+   * @param {Config} config - The config.
+   */
+  addRefreshmentData(refreshmentData, config) {
+    this.accessToken = refreshmentData.access_token;
+    this.refreshToken = refreshmentData.refresh_token;
+    this.accessTokenExpires = Date.now() + refreshmentData.expires_in * 1000;
+    this.refreshTokenExpires = Date.now() + config.refreshTokenWindow;
+  }
+
+  /**
+   * @description
+   * Replaces tokens with null to revoke them.
+   */
+  revoke() {
+    this.accessToken = null;
+    this.accessTokenExpires = null;
+    this.refreshToken = null;
+    this.refreshTokenExpires = null;
   }
 }

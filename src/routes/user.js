@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import authGuard from './auth-guard';
+import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
 import UserLogic from '../logic/user';
 
@@ -12,12 +12,13 @@ import UserLogic from '../logic/user';
  */
 export default (userLogic, router) => {
   router.get(routes.USER_INFO,
-    authGuard,
+    refreshAuthGuard,
     async (ctx) => {
       try {
         ctx.body = await userLogic.getClientInfo(ctx.session.userId);
       } catch (e) {
-        console.error(e);
+        console.error(e.message);
+        console.error(e.stack);
         ctx.throw(500);
       }
     });
