@@ -9,19 +9,15 @@ import DeviationsLogic from '../logic/deviations';
  *
  * @param {DeviationsLogic} deviationsLogic - The deviations logic object.
  * @param {Router} router - Koa router.
- * @param {any} loadTaskCreator - Task creator.
  */
-export default (deviationsLogic, router, loadTaskCreator) => {
+export default (deviationsLogic, router) => {
   router.get(routes.DEVIATIONS_LOAD,
     accessAuthGuard,
     async (ctx) => {
       try {
-        await loadTaskCreator({
-          userId: ctx.session.userId,
-          offset: Number.parseInt(ctx.params.offset, 10),
-        }).run();
+        await deviationsLogic.startLoadDeviationsTask(ctx.session.userId);
 
-        ctx.body = 'Loaded';
+        ctx.body = 'Task has been created';
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);

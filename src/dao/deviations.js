@@ -50,7 +50,11 @@ export default class UserDao {
    */
   async getByUser(userId, offset, limit) {
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS)
-      .find({ userId }, { skip: offset, limit })
+      .find({ userId }, {
+        skip: offset,
+        limit,
+        sort: { publishedTime: -1 },
+      })
       .toArray();
 
     return dbObjects.map(d => DeviationConverter.fromDbObject(d));

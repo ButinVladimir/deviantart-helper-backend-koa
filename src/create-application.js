@@ -9,16 +9,14 @@ import Config from './config/config';
 
 import AuthApi from './api/auth';
 import UserApi from './api/user';
-import GalleryApi from './api/gallery';
 
 import UserDao from './dao/user';
 import DeviationsDao from './dao/deviations';
+import TasksDao from './dao/tasks';
 
 import AuthLogic from './logic/auth';
 import UserLogic from './logic/user';
 import DeviationsLogic from './logic/deviations';
-
-import DeviationsLoadTask from './tasks/deviations-load';
 
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
@@ -53,25 +51,19 @@ export default (db, config) => {
 
     const authApi = new AuthApi();
     const userApi = new UserApi();
-    const galleryApi = new GalleryApi();
 
     const userDao = new UserDao(db);
     const deviationsDao = new DeviationsDao(db);
+    const tasksDao = new TasksDao(db);
 
     const authLogic = new AuthLogic(authApi, userApi, userDao, config);
     const userLogic = new UserLogic(userApi, userDao);
-    const deviationsLogic = new DeviationsLogic(userDao, deviationsDao, config);
-
-    /* eslint-disable */
-    const loadTaskCreator = (params) => {
-      return new DeviationsLoadTask(params, galleryApi, userDao, deviationsDao, config);
-    };
-    /* eslint-enable */
+    const deviationsLogic = new DeviationsLogic(userDao, deviationsDao, tasksDao, config);
 
     const router = new Router();
     authRoutes(authLogic, router, config, app);
     userRoutes(userLogic, router);
-    deviationsRoutes(deviationsLogic, router, loadTaskCreator);
+    deviationsRoutes(deviationsLogic, router);
 
     app.use(router.routes());
     app.use(router.allowedMethods());
