@@ -1,18 +1,18 @@
-import Deviation from './deviation';
+import DeviationModel from './deviation';
 
 /**
- * Class to convert object from and into the Deviation objects.
+ * Class to convert object from and into the DeviationModel objects.
  */
-export default class DeviationConverter {
+export default class DeviationModelConverter {
   /**
    * @description
-   * Converts API object to Deviation.
+   * Converts API object to DeviationModel.
    *
    * @param {Object} apiObject - Object from API.
-   * @returns {Deviation} - Deviation object.
+   * @returns {DeviationModel} - DeviationModel object.
    */
   static fromApiObject(apiObject) {
-    const deviation = new Deviation();
+    const deviation = new DeviationModel();
 
     deviation.id = apiObject.deviationid;
     deviation.userId = apiObject.author.userid;
@@ -32,9 +32,9 @@ export default class DeviationConverter {
 
   /**
    * @description
-   * Converts Deviation to DB object.
+   * Converts DeviationModel to DB object.
    *
-   * @param {Deviation} deviation - Deviation instance.
+   * @param {DeviationModel} deviation - DeviationModel instance.
    * @returns {Object} DB object.
    */
   static toDbObject(deviation) {
@@ -49,13 +49,13 @@ export default class DeviationConverter {
 
   /**
    * @description
-   * Converts DB object to Deviation.
+   * Converts DB object to DeviationModel.
    *
    * @param {Object} dbObject - DB object.
-   * @returns {Deviation} Deviation instance.
+   * @returns {DeviationModel} DeviationModel instance.
    */
   static fromDbObject(dbObject) {
-    const deviation = new Deviation();
+    const deviation = new DeviationModel();
 
     // eslint-disable-next-line no-underscore-dangle
     deviation.id = dbObject._id;
@@ -70,9 +70,9 @@ export default class DeviationConverter {
 
   /**
    * @description
-   * Converts Deviation into object for client.
+   * Converts DeviationModel into object for client.
    *
-   * @param {Deviation} deviation - Deviation instance.
+   * @param {DeviationModel} deviation - DeviationModel instance.
    * @returns {Object} Object for client.
    */
   static toClientObject(deviation) {

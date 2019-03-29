@@ -1,7 +1,7 @@
 /**
- * Deviation info object.
+ * Deviation model object.
  */
-export default class DeviationInfo {
+export default class DeviationModel {
   /**
    * @description
    * The constructor.

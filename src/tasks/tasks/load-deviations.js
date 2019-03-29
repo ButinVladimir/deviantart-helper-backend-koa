@@ -6,6 +6,7 @@ import TasksDao from '../../dao/tasks';
 import Config from '../../config/config';
 import DeviationConverter from '../../models/deviation/converter';
 import LoadDeviationsTaskModelFactory from '../../models/task/factories/load-deviations-factory';
+import LoadDeviationsMetadataTaskModelFactory from '../../models/task/factories/load-deviations-metadata-factory';
 import { fetchUserInfoAndCheckAccessToken } from '../../helper';
 
 /**
@@ -69,6 +70,10 @@ export default class LoadDeviationsTask extends BaseTask {
 
     const deviations = result.results.map(d => DeviationConverter.fromApiObject(d));
     await this.deviationsDao.batchUpdate(deviations);
+
+    this.tasksDao.batchInsert([
+      LoadDeviationsMetadataTaskModelFactory.createModel(this.userId, deviations.map(d => d.id)),
+    ]);
 
     if (result.has_more) {
       this.tasksDao.batchInsert([

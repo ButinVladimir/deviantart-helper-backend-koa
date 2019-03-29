@@ -4,7 +4,7 @@ import Task from '../task';
 
 /**
  * @description
- * The factory which creates tasks to load deviation from DeviantArt API.
+ * The factory which creates tasks to load deviations from DeviantArt API.
  */
 export default class LoadDeviationsTaskModelFactory extends BaseTaskModelFactory {
   /**

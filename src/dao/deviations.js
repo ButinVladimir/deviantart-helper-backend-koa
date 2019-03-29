@@ -6,7 +6,7 @@ import DeviationConverter from '../models/deviation/converter';
 /**
  * Deviations DAO class.
  */
-export default class UserDao {
+export default class DeviationsDao {
   /**
    * @description
    * The constructor.
