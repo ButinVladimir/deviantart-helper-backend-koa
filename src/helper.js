@@ -1,5 +1,5 @@
 import UserDao from './dao/user';
-import UserInfo from './models/user-info/user-info';
+import UserInfoModel from './models/user-info/user-info';
 
 /**
  * @description
@@ -7,7 +7,7 @@ import UserInfo from './models/user-info/user-info';
  *
  * @param {string} userId - The user ID.
  * @param {UserDao} userDao - The user DAO.
- * @returns {UserInfo} The user info.
+ * @returns {UserInfoModel} The user info.
  */
 export const fetchUserInfoAndCheckAccessToken = async (userId, userDao) => {
   const userInfo = await userDao.getById(userId);
@@ -25,7 +25,7 @@ export const fetchUserInfoAndCheckAccessToken = async (userId, userDao) => {
  *
  * @param {string} userId - The user ID.
  * @param {UserDao} userDao - The user DAO.
- * @returns {UserInfo} The user info.
+ * @returns {UserInfoModel} The user info.
  */
 export const fetchUserInfoAndCheckRefreshToken = async (userId, userDao) => {
   const userInfo = await userDao.getById(userId);

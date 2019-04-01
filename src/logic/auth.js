@@ -1,5 +1,5 @@
-import UserInfo from '../models/user-info/user-info';
-import UserInfoConverter from '../models/user-info/converter';
+import UserInfoModel from '../models/user-info/user-info';
+import UserInfoModelConverter from '../models/user-info/converter';
 import AuthApi from '../api/auth';
 import UserApi from '../api/user';
 import UserDao from '../dao/user';
@@ -34,15 +34,13 @@ export default class AuthLogic {
    * @returns {Object} Session data object.
    */
   async authCallback(grantResponse) {
-    const userInfo = new UserInfo();
+    const userInfo = new UserInfoModel();
     userInfo.addAuthData(grantResponse, this.config);
-
-    const whoAmIData = await this.userApi.whoAmI(userInfo.accessToken);
-    userInfo.addWhoAmIData(whoAmIData);
+    userInfo.addWhoAmIData(await this.userApi.whoAmI(userInfo.accessToken));
 
     await this.userDao.update(userInfo);
 
-    return UserInfoConverter.toSessionData(userInfo);
+    return UserInfoModelConverter.toSessionData(userInfo);
   }
 
   /**
@@ -57,8 +55,7 @@ export default class AuthLogic {
     const result = await this.authApi.revoke(userInfo.refreshToken);
 
     if (result) {
-      userInfo.revoke();
-      await this.userDao.update(userInfo);
+      await this.userDao.update(userInfo.revoke());
 
       return true;
     }
@@ -75,15 +72,18 @@ export default class AuthLogic {
    */
   async refresh(userId) {
     const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-    const refreshmentData = await this.authApi.refresh(
-      this.config.oauthKey,
-      this.config.oauthSecret,
-      userInfo.refreshToken,
+
+    userInfo.addRefreshmentData(
+      await this.authApi.refresh(
+        this.config.oauthConfig.key,
+        this.config.oauthConfig.secret,
+        userInfo.refreshToken,
+      ),
+      this.config,
     );
-    userInfo.addRefreshmentData(refreshmentData, this.config);
 
     await this.userDao.update(userInfo);
 
-    return UserInfoConverter.toSessionData(userInfo);
+    return UserInfoModelConverter.toSessionData(userInfo);
   }
 }

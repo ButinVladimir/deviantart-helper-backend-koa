@@ -19,13 +19,13 @@ import AuthLogic from '../logic/auth';
 export default (authLogic, router, config, app) => {
   app.use(mount(routes.AUTH_PREFIX, grant({
     defaults: {
-      redirect_uri: config.oauthRedirectUri,
+      redirect_uri: config.oauthConfig.redirectUri,
       transport: 'session',
       path: routes.AUTH_PREFIX,
     },
     deviantart: {
-      key: config.oauthKey,
-      secret: config.oauthSecret,
+      key: config.oauthConfig.key,
+      secret: config.oauthConfig.secret,
       scope: ['user', 'browse'],
       callback: routes.AUTH_CALLBACK,
     },

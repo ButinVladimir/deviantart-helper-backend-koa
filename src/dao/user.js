@@ -1,7 +1,7 @@
 import { Db } from 'mongodb';
 import { COLLECTION_USERS } from '../consts/collections';
-import UserInfo from '../models/user-info/user-info';
-import UserInfoConverter from '../models/user-info/converter';
+import UserInfoModel from '../models/user-info/user-info';
+import UserInfoModelConverter from '../models/user-info/converter';
 
 /**
  * User DAO class.
@@ -21,12 +21,12 @@ export default class UserDao {
    * @description
    * Saves user info in DB.
    *
-   * @param {UserInfo} userInfo - UserInfo instance.
+   * @param {UserInfoModel} userInfo - UserInfo instance.
    */
   async update(userInfo) {
     await this.db.collection(COLLECTION_USERS).updateOne(
       { _id: userInfo.userId },
-      { $set: UserInfoConverter.toDbObject(userInfo) },
+      { $set: UserInfoModelConverter.toDbObject(userInfo) },
       { upsert: true },
     );
   }
@@ -36,13 +36,13 @@ export default class UserDao {
    * Fetches user info object by user id.
    *
    * @param {string} userId - The user id.
-   * @returns {UserInfo} UserInfo instance.
+   * @returns {UserInfoModel} UserInfo instance.
    */
   async getById(userId) {
     const dbObject = await this.db.collection(COLLECTION_USERS).findOne({ _id: userId });
 
     return dbObject
-      ? UserInfoConverter.fromDbObject(dbObject)
+      ? UserInfoModelConverter.fromDbObject(dbObject)
       : null;
   }
 

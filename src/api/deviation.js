@@ -2,7 +2,6 @@ import axios from 'axios';
 import qs from 'qs';
 import * as api from '../consts/api';
 import DeviationMetadataModel from '../models/deviation-metadata/deviation-metadata';
-import DeviationMetadataModelConverter from '../models/deviation-metadata/converter';
 
 /* eslint-disable class-methods-use-this */
 
@@ -27,7 +26,6 @@ export default class DeviationApi {
       deviationids: deviationIds,
       ext_stats: true,
     };
-    console.log(qs.stringify(params));
 
     const response = await axios.post(
       `${api.DEVIATION_METADATA}`,
@@ -39,9 +37,7 @@ export default class DeviationApi {
       },
     );
 
-    return response.data && response.data.metadata
-      ? response.data.metadata.map(md => DeviationMetadataModelConverter.fromApiObject(md))
-      : [];
+    return response.data;
   }
 }
 

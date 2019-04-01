@@ -1,14 +1,14 @@
-import UserInfo from './user-info';
+import UserInfoModel from './user-info';
 
 /**
- * Class to convert object from and into the UserInfo objects.
+ * Class to convert object from and into the UserInfoModel objects.
  */
-export default class UserInfoConverter {
+export default class UserInfoModelConverter {
   /**
    * @description
-   * Converts UserInfo to session data.
+   * Converts UserInfoModel to session data.
    *
-   * @param {UserInfo} userInfo - UserInfo instance.
+   * @param {UserInfoModel} userInfo - UserInfoModel instance.
    * @returns {Object} Session object.
    */
   static toSessionData(userInfo) {
@@ -21,9 +21,9 @@ export default class UserInfoConverter {
 
   /**
    * @description
-   * Converts UserInfo to DB object.
+   * Converts UserInfoModel to DB object.
    *
-   * @param {UserInfo} userInfo - UserInfo instance.
+   * @param {UserInfoModel} userInfo - UserInfoModel instance.
    * @returns {Object} DB object.
    */
   static toDbObject(userInfo) {
@@ -40,13 +40,13 @@ export default class UserInfoConverter {
 
   /**
    * @description
-   * Converts DB object to UserInfo.
+   * Converts DB object to UserInfoModel.
    *
    * @param {Object} dbObject - DB object.
-   * @returns {UserInfo} UserInfo instance.
+   * @returns {UserInfoModel} UserInfoModel instance.
    */
   static fromDbObject(dbObject) {
-    const userInfo = new UserInfo();
+    const userInfo = new UserInfoModel();
 
     userInfo.accessToken = dbObject.accessToken;
     userInfo.accessTokenExpires = dbObject.accessTokenExpires;
@@ -63,9 +63,9 @@ export default class UserInfoConverter {
 
   /**
    * @description
-   * Converts UserInfo into object for client.
+   * Converts UserInfoModel into object for client.
    *
-   * @param {UserInfo} userInfo - UserInfo instance.
+   * @param {UserInfoModel} userInfo - UserInfoModel instance.
    * @returns {Object} Object for client.
    */
   static toClientObject(userInfo) {

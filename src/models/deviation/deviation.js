@@ -13,5 +13,6 @@ export default class DeviationModel {
     this.url = '';
     this.publishedTime = 0;
     this.thumbnail = null;
+    this.preview = null;
   }
 }

@@ -1,19 +1,24 @@
+import { Worker } from 'worker_threads';
+import { join } from 'path';
 import { MongoClient } from 'mongodb';
 import config from './config';
 import createApplication from './create-application';
-import createScheduler from './create-scheduler';
 
-const dbClient = new MongoClient(config.connectionString, {
+const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
 });
 
 dbClient
   .connect()
   .then((client) => {
-    const db = client.db(config.db);
+    const db = client.db(config.dbConfig.dbName);
 
-    createApplication(db, config).listen(config.port);
-    createScheduler(db, config).start();
+    const schedulerWorker = new Worker(join(__dirname, 'index-scheduler.js'));
+
+    createApplication(db, schedulerWorker, config)
+      .listen(config.serverConfig.port, () => {
+        console.debug('Server is running');
+      });
   }).catch((e) => {
     console.error(e);
   });

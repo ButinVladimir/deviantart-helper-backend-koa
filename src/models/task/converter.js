@@ -1,14 +1,14 @@
-import Task from './task';
+import TaskModel from './task';
 
 /**
- * Class to convert object from and into the Task objects.
+ * Class to convert object from and into the TaskModel objects.
  */
-export default class TaskConverter {
+export default class TaskModelConverter {
   /**
    * @description
-   * Converts Task to DB object.
+   * Converts TaskModel to DB object.
    *
-   * @param {Task} task - Task instance.
+   * @param {TaskModel} task - Task instance.
    * @returns {Object} DB object.
    */
   static toDbObject(task) {
@@ -24,13 +24,13 @@ export default class TaskConverter {
 
   /**
    * @description
-   * Converts DB object to Task.
+   * Converts DB object to TaskModel.
    *
    * @param {Object} dbObject - DB object.
-   * @returns {Task} Task instance.
+   * @returns {TaskModel} TaskModel instance.
    */
   static fromDbObject(dbObject) {
-    const task = new Task();
+    const task = new TaskModel();
 
     // eslint-disable-next-line no-underscore-dangle
     task.id = dbObject._id;

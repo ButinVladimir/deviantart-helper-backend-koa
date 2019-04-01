@@ -1,8 +1,8 @@
 import { Db } from 'mongodb';
 import { COLLECTION_TASKS } from '../consts/collections';
 import { NOT_STARTED } from '../consts/task-states';
-import Task from '../models/task/task';
-import TaskConverter from '../models/task/converter';
+import TaskModel from '../models/task/task';
+import TaskModelConverter from '../models/task/converter';
 
 /**
  * Tasks DAO class.
@@ -22,13 +22,13 @@ export default class TasksDao {
    * @description
    * Batch insert of tasks.
    *
-   * @param {Task[]} tasks - Array of Task instances.
+   * @param {TaskModel[]} tasks - Array of Task instances.
    * @returns {undefined} Nothing.
    */
   async batchInsert(tasks) {
     const operations = tasks.map(t => ({
       insertOne: {
-        document: TaskConverter.toDbObject(t),
+        document: TaskModelConverter.toDbObject(t),
       },
     }));
 
@@ -42,7 +42,7 @@ export default class TasksDao {
    * @description
    * Fetches single task which hasn't been started.
    *
-   * @returns {Task} Fetched task.
+   * @returns {TaskModel} Fetched task.
    */
   async getNotStartedTask() {
     const dbObjects = await this.db.collection(COLLECTION_TASKS)
@@ -50,7 +50,7 @@ export default class TasksDao {
       .toArray();
 
     return dbObjects && dbObjects.length > 0
-      ? TaskConverter.fromDbObject(dbObjects[0])
+      ? TaskModelConverter.fromDbObject(dbObjects[0])
       : null;
   }
 
@@ -58,12 +58,12 @@ export default class TasksDao {
    * @description
    * Updates task.
    *
-   * @param {Task} task - Task instance.
+   * @param {TaskModel} task - Task instance.
    */
   async updateTask(task) {
     await this.db.collection(COLLECTION_TASKS).updateOne(
       { _id: task.id },
-      { $set: TaskConverter.toDbObject(task) },
+      { $set: TaskModelConverter.toDbObject(task) },
     );
   }
 }

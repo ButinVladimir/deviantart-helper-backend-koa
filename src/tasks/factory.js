@@ -1,13 +1,14 @@
+import AuthApi from '../api/auth';
 import GalleryApi from '../api/gallery';
 import DeviationApi from '../api/deviation';
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
-import TasksDao from '../dao/tasks';
 import Config from '../config/config';
 import * as taskNames from '../consts/task-names';
 import TaskModel from '../models/task/task';
 import BaseTask from './base';
+import RefreshAccessTokenTaskDecorator from './tasks/refresh-access-token-decorator';
 import LoadDeviationsTask from './tasks/load-deviations';
 import LoadDeviationsMetadataTask from './tasks/load-deviations-metadata';
 
@@ -20,37 +21,38 @@ export default class TaskFactory {
    * @description
    * The constructor.
    *
+   * @param {AuthApi} authApi - DeviantArt auth API.
    * @param {GalleryApi} galleryApi - DeviantArt gallery API.
    * @param {DeviationApi} deviationApi - DeviantArt deviation API.
    * @param {UserDao} userDao - The user DAO.
    * @param {DeviationsDao} deviationsDao - The deviations DAO.
    * @param {DeviationsMetadataDao} deviationsMetadataDao - The deviations metadata DAO.
-   * @param {TasksDao} tasksDao - The tasks DAO.
    * @param {Config} config - The config.
    */
   constructor(
+    authApi,
     galleryApi,
     deviationApi,
     userDao,
     deviationsDao,
     deviationsMetadataDao,
-    tasksDao,
     config,
   ) {
+    this.authApi = authApi;
     this.galleryApi = galleryApi;
     this.deviationApi = deviationApi;
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
-    this.tasksDao = tasksDao;
     this.config = config;
   }
 
   /**
    * @description
-   * Creates task from task model and injects dependencies.
+   * Creates task from task model, injects dependencies and
+   * wraps it in RefreshAccessTokenTaskDecorator.
    *
-   * @param {TaskModel} taskModel - The task model.
+   * @param {TaskModel} taskModel - The TaskModel instance.
    * @returns {BaseTask} Task.
    */
   createTaskFromModel(taskModel) {
@@ -58,26 +60,72 @@ export default class TaskFactory {
       return null;
     }
 
+    const internalTask = this.createTaskFromModelInternal(taskModel);
+
+    if (internalTask !== null) {
+      return new RefreshAccessTokenTaskDecorator(
+        taskModel.params,
+        internalTask,
+        this.authApi,
+        this.userDao,
+        this.config,
+      );
+    }
+
+    return null;
+  }
+
+  /**
+   * @description
+   * Creates task from task model, injects dependencies.
+   * Please use createTaskFromModel instead because it adds validation of refresh token
+   * and token regeneration if necessary.
+   *
+   * @param {TaskModel} taskModel - The TaskModel instance.
+   * @returns {BaseTask} Task.
+   */
+  createTaskFromModelInternal(taskModel) {
     switch (taskModel.name) {
       case taskNames.LOAD_DEVIATIONS:
-        return new LoadDeviationsTask(
-          taskModel.params,
-          this.galleryApi,
-          this.userDao,
-          this.deviationsDao,
-          this.tasksDao,
-          this.config,
-        );
+        return this.createLoadDeviationsTask(taskModel);
       case taskNames.LOAD_DEVIATIONS_METADATA:
-        return new LoadDeviationsMetadataTask(
-          taskModel.params,
-          this.deviationApi,
-          this.userDao,
-          this.deviationsMetadataDao,
-          this.config,
-        );
+        return this.createLoadDeviationsMetadataTask(taskModel);
       default:
         return null;
     }
+  }
+
+  /**
+   * @description
+   * Creates LoadDeviationsTask instance from task model and injects dependencies.
+   *
+   * @param {TaskModel} taskModel - The TaskModel instance.
+   * @returns {LoadDeviationsTask} LoadDeviationsTask instance.
+   */
+  createLoadDeviationsTask(taskModel) {
+    return new LoadDeviationsTask(
+      taskModel.params,
+      this.galleryApi,
+      this.userDao,
+      this.deviationsDao,
+      this.config,
+    );
+  }
+
+  /**
+   * @description
+   * Creates LoadDeviationsMetadataTask instance from task model and injects dependencies.
+   *
+   * @param {TaskModel} taskModel - The TaskModel instance.
+   * @returns {LoadDeviationsTask} LoadDeviationsTask instance.
+   */
+  createLoadDeviationsMetadataTask(taskModel) {
+    return new LoadDeviationsMetadataTask(
+      taskModel.params,
+      this.deviationApi,
+      this.userDao,
+      this.deviationsMetadataDao,
+      this.config,
+    );
   }
 }

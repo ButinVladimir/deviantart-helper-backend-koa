@@ -1,4 +1,4 @@
-import UserInfoConverter from '../models/user-info/converter';
+import UserInfoModelConverter from '../models/user-info/converter';
 import UserApi from '../api/user';
 import UserDao from '../dao/user';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
@@ -29,6 +29,6 @@ export default class UserLogic {
   async getClientInfo(userId) {
     const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
-    return UserInfoConverter.toClientObject(userInfo);
+    return UserInfoModelConverter.toClientObject(userInfo);
   }
 }

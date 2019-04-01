@@ -1,10 +1,10 @@
+import { Worker } from 'worker_threads';
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
-import TasksDao from '../dao/tasks';
 import Config from '../config/config';
 import DeviationConverter from '../models/deviation/converter';
 import LoadDeviationsTaskModelFactory from '../models/task/factories/load-deviations-factory';
-import { fetchUserInfoAndCheckAccessToken } from '../helper';
+import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
  * Logic for deviations part.
@@ -16,13 +16,13 @@ export default class DeviationsLogic {
    *
    * @param {UserDao} userDao - User DAO.
    * @param {DeviationsDao} deviationsDao - Deviations DAO.
-   * @param {TasksDao} tasksDao - Tasks DAO.
+   * @param {Worker} schedulerWorker - The task scheduler worker thread.
    * @param {Config} config - Config.
    */
-  constructor(userDao, deviationsDao, tasksDao, config) {
+  constructor(userDao, deviationsDao, schedulerWorker, config) {
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
-    this.tasksDao = tasksDao;
+    this.schedulerWorker = schedulerWorker;
     this.config = config;
   }
 
@@ -35,12 +35,12 @@ export default class DeviationsLogic {
    * @returns {Object[]} Deviations.
    */
   async browse(userId, offset) {
-    await fetchUserInfoAndCheckAccessToken(userId, this.userDao);
+    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
     const deviations = await this.deviationsDao.getByUser(
       userId,
       offset,
-      this.config.daoLimitDeviationsBrowse,
+      this.config.daoConfig.limitDeviationsBrowse,
     );
 
     return deviations.map(d => DeviationConverter.toClientObject(d));
@@ -53,10 +53,8 @@ export default class DeviationsLogic {
    * @param {string} userId - The user ID.
    */
   async startLoadDeviationsTask(userId) {
-    await fetchUserInfoAndCheckAccessToken(userId, this.userDao);
+    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
-    await this.tasksDao.batchInsert([
-      LoadDeviationsTaskModelFactory.createModel(userId, 0),
-    ]);
+    this.schedulerWorker.postMessage(LoadDeviationsTaskModelFactory.createModel(userId, 0));
   }
 }

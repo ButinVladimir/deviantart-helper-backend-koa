@@ -1,6 +1,7 @@
 import { Db } from 'mongodb';
 import Config from './config/config';
 
+import AuthApi from './api/auth';
 import GalleryApi from './api/gallery';
 import DeviationApi from './api/deviation';
 
@@ -21,6 +22,7 @@ import TaskScheduler from './tasks/scheduler';
  * @returns {TaskScheduler} Application.
  */
 export default (db, config) => {
+  const authApi = new AuthApi();
   const galleryApi = new GalleryApi();
   const deviationApi = new DeviationApi();
 
@@ -30,15 +32,15 @@ export default (db, config) => {
   const tasksDao = new TasksDao(db);
 
   const taskFactory = new TaskFactory(
+    authApi,
     galleryApi,
     deviationApi,
     userDao,
     deviationsDao,
     deviationsMetadataDao,
-    tasksDao,
     config,
   );
-  const taskScheduler = new TaskScheduler(tasksDao, taskFactory);
+  const taskScheduler = new TaskScheduler(tasksDao, taskFactory, config);
 
   return taskScheduler;
 };

@@ -18,12 +18,21 @@ export default class DeviationModelConverter {
     deviation.userId = apiObject.author.userid;
     deviation.title = apiObject.title;
     deviation.url = apiObject.url;
-    deviation.publishedTime = Number.parseInt(apiObject.published_time, 10);
+    deviation.publishedTime = Number.parseInt(apiObject.published_time, 10) * 1000;
+
     if (apiObject.thumbs && apiObject.thumbs.length > 0) {
       deviation.thumbnail = {
         src: apiObject.thumbs[0].src,
         width: apiObject.thumbs[0].width,
         height: apiObject.thumbs[0].height,
+      };
+    }
+
+    if (apiObject.preview) {
+      deviation.preview = {
+        src: apiObject.preview.src,
+        width: apiObject.preview.width,
+        height: apiObject.preview.height,
       };
     }
 
@@ -44,6 +53,7 @@ export default class DeviationModelConverter {
       url: deviation.url,
       publishedTime: deviation.publishedTime,
       thumbnail: deviation.thumbnail,
+      preview: deviation.preview,
     };
   }
 
@@ -64,6 +74,7 @@ export default class DeviationModelConverter {
     deviation.url = dbObject.url;
     deviation.publishedTime = dbObject.publishedTime;
     deviation.thumbnail = dbObject.thumbnail;
+    deviation.preview = dbObject.preview;
 
     return deviation;
   }
@@ -82,6 +93,7 @@ export default class DeviationModelConverter {
       url: deviation.url,
       publishedTime: deviation.publishedTime,
       thumbnail: deviation.thumbnail,
+      preview: deviation.preview,
     };
   }
 }

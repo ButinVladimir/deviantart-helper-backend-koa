@@ -1,6 +1,6 @@
 import BaseTaskModelFactory from '../base-factory';
 import { LOAD_DEVIATIONS } from '../../../consts/task-names';
-import Task from '../task';
+import TaskModel from '../task';
 
 /**
  * @description
@@ -10,11 +10,11 @@ export default class LoadDeviationsTaskModelFactory extends BaseTaskModelFactory
   /**
    * @override
    * @description
-   * Creates model for task.
+   * Creates TaskModel instance.
    *
    * @param {number} userId - User ID.
    * @param {number} offset - The offset.
-   * @returns {Task} Task model.
+   * @returns {TaskModel} TaskModel instance.
    */
   static createModel(userId, offset) {
     const params = {
@@ -22,6 +22,6 @@ export default class LoadDeviationsTaskModelFactory extends BaseTaskModelFactory
       offset,
     };
 
-    return super.createModelInternal(LOAD_DEVIATIONS, params);
+    return super.createModelRaw(LOAD_DEVIATIONS, params);
   }
 }

@@ -9,7 +9,7 @@ export default class DeviationMetadataModelConverter {
    * Converts API object to DeviationMetadataModel.
    *
    * @param {Object} apiObject - Object from API.
-   * @returns {DeviationMetadataModel} - DeviationMetadataModel object.
+   * @returns {DeviationMetadataModel} - DeviationMetadataModel instance.
    */
   static fromApiObject(apiObject) {
     const deviationMetadata = new DeviationMetadataModel();
@@ -34,6 +34,7 @@ export default class DeviationMetadataModelConverter {
   static toDbObject(deviationModel) {
     return {
       deviationId: deviationModel.deviationId,
+      userId: deviationModel.userId,
       timestamp: deviationModel.timestamp,
       views: deviationModel.views,
       comments: deviationModel.comments,
@@ -53,6 +54,7 @@ export default class DeviationMetadataModelConverter {
     const deviationMetadata = new DeviationMetadataModel();
 
     deviationMetadata.deviationId = dbObject.deviationId;
+    deviationMetadata.userId = dbObject.userId;
     deviationMetadata.timestamp = dbObject.timestamp;
     deviationMetadata.views = dbObject.views;
     deviationMetadata.comments = dbObject.comments;

@@ -1,7 +1,7 @@
 import { Db } from 'mongodb';
 import { COLLECTION_DEVIATIONS } from '../consts/collections';
-import Deviation from '../models/deviation/deviation';
-import DeviationConverter from '../models/deviation/converter';
+import DeviationModel from '../models/deviation/deviation';
+import DeviationModelConverter from '../models/deviation/converter';
 
 /**
  * Deviations DAO class.
@@ -21,14 +21,14 @@ export default class DeviationsDao {
    * @description
    * Batch update of deviations.
    *
-   * @param {Deviation[]} deviations - Array of Deviation instances.
+   * @param {DeviationModel[]} deviations - Array of Deviation instances.
    * @returns {undefined} Nothing.
    */
   async batchUpdate(deviations) {
     const operations = deviations.map(d => ({
       updateOne: {
         filter: { _id: d.id },
-        update: { $set: DeviationConverter.toDbObject(d) },
+        update: { $set: DeviationModelConverter.toDbObject(d) },
         upsert: true,
       },
     }));
@@ -46,7 +46,7 @@ export default class DeviationsDao {
    * @param {string} userId - The user ID.
    * @param {number} offset - The offset.
    * @param {number} limit - The limit.
-   * @returns {Deviation[]} Fetched deviations.
+   * @returns {DeviationModel[]} Fetched deviations.
    */
   async getByUser(userId, offset, limit) {
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS)
@@ -57,6 +57,6 @@ export default class DeviationsDao {
       })
       .toArray();
 
-    return dbObjects.map(d => DeviationConverter.fromDbObject(d));
+    return dbObjects.map(d => DeviationModelConverter.fromDbObject(d));
   }
 }

@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import accessAuthGuard from './access-auth-guard';
+import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
 import DeviationsLogic from '../logic/deviations';
 
@@ -12,7 +12,7 @@ import DeviationsLogic from '../logic/deviations';
  */
 export default (deviationsLogic, router) => {
   router.get(routes.DEVIATIONS_LOAD,
-    accessAuthGuard,
+    refreshAuthGuard,
     async (ctx) => {
       try {
         await deviationsLogic.startLoadDeviationsTask(ctx.session.userId);
@@ -26,7 +26,7 @@ export default (deviationsLogic, router) => {
     });
 
   router.get(routes.DEVIATIONS_BROWSE,
-    accessAuthGuard,
+    refreshAuthGuard,
     async (ctx) => {
       try {
         ctx.body = await deviationsLogic.browse(

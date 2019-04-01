@@ -1,12 +1,13 @@
-import Task from './task';
+import TaskModel from './task';
 
 /**
  * The base task model factory.
+ * @abstract
  */
 export default class BaseTaskModelFactory {
   /**
    * @description
-   * Creates model for task.
+   * Creates TaskModel instance.
    */
   static createModel() {
     throw new Error('createModel method should be overriden');
@@ -14,19 +15,20 @@ export default class BaseTaskModelFactory {
 
   /**
    * @description
-   * Creates model for task.
-   * Can be used only in descendants of BaseTaskModelFactory.
+   * Creates TaskModel instance.
+   * Can be used only in descendants of BaseTaskModelFactory
+   * or when scheduler worker thread receives task.
    * For other cases please use createModel instead.
    *
    * @param {string} name - Task name.
    * @param {Object} params - Task parameters.
-   * @returns {Task} Task model.
+   * @returns {TaskModel} TaskModel instance.
    */
-  static createModelInternal(name, params) {
-    const task = new Task();
+  static createModelRaw(name, params) {
+    const task = new TaskModel();
 
     task.name = name;
-    task.params = params;
+    task.params = Object.assign({}, params);
     task.setNotStartedState();
 
     return task;

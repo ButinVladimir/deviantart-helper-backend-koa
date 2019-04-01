@@ -1,6 +1,6 @@
 import BaseTaskModelFactory from '../base-factory';
 import { LOAD_DEVIATIONS_METADATA } from '../../../consts/task-names';
-import Task from '../task';
+import TaskModel from '../task';
 
 /**
  * @description
@@ -10,11 +10,11 @@ export default class LoadDeviationsMetadataTaskModelFactory extends BaseTaskMode
   /**
    * @override
    * @description
-   * Creates model for task.
+   * Creates TaskModel instance.
    *
    * @param {number} userId - User ID.
    * @param {string[]} deviationIds - Deviations IDs.
-   * @returns {Task} Task model.
+   * @returns {TaskModel} TaskModel instance.
    */
   static createModel(userId, deviationIds) {
     const params = {
@@ -22,6 +22,6 @@ export default class LoadDeviationsMetadataTaskModelFactory extends BaseTaskMode
       deviationIds: Array.from(deviationIds),
     };
 
-    return super.createModelInternal(LOAD_DEVIATIONS_METADATA, params);
+    return super.createModelRaw(LOAD_DEVIATIONS_METADATA, params);
   }
 }

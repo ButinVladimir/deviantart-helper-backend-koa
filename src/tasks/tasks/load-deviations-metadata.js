@@ -2,8 +2,10 @@ import BaseTask from '../base';
 import DeviationApi from '../../api/deviation';
 import UserDao from '../../dao/user';
 import DeviationsMetadataDao from '../../dao/deviations-metadata';
+import DeviationMetadataModelConverter from '../../models/deviation-metadata/converter';
 import Config from '../../config/config';
 import { fetchUserInfoAndCheckAccessToken } from '../../helper';
+import TaskModel from '../../models/task/task';
 
 /**
  * Task to get deviations metadata by user.
@@ -47,19 +49,27 @@ export default class LoadDeviationsMetadataTask extends BaseTask {
    * @description
    * Runs current task.
    *
-   * @returns {Promise<undefined>} Nothing.
+   * @returns {Promise<TaskModel[]>} Batch of next tasks.
    */
   async run() {
     const userInfo = await fetchUserInfoAndCheckAccessToken(this.userId, this.userDao);
 
-    const deviationsMetadata = await this.deviationApi.getDeviationsMetadata(
+    const data = await this.deviationApi.getDeviationsMetadata(
       userInfo.accessToken,
       this.deviationIds,
     );
 
-    console.log('Got deviations metadata for', userInfo.userName);
-    console.log('Ids', this.deviationIds);
+    if (data.metadata && data.metadata.length > 0) {
+      const deviationsMetadata = data.metadata
+        .map(dm => DeviationMetadataModelConverter
+          .fromApiObject(dm)
+          .setUserId(this.userId));
 
-    await this.deviationsMetadataDao.batchInsert(deviationsMetadata);
+      console.debug('Got deviations metadata for', userInfo.userName);
+
+      await this.deviationsMetadataDao.batchInsert(deviationsMetadata);
+    }
+
+    return [];
   }
 }
