@@ -12,7 +12,7 @@ export default class LoadDeviationsTaskModelFactory extends BaseTaskModelFactory
    * @description
    * Creates TaskModel instance.
    *
-   * @param {number} userId - User ID.
+   * @param {string} userId - User ID.
    * @param {number} offset - The offset.
    * @returns {TaskModel} TaskModel instance.
    */

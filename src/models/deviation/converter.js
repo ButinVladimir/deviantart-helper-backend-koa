@@ -1,4 +1,5 @@
 import DeviationModel from './deviation';
+import DeviationMetadataModel from '../deviation-metadata/deviation-metadata';
 
 /**
  * Class to convert object from and into the DeviationModel objects.
@@ -59,6 +60,22 @@ export default class DeviationModelConverter {
 
   /**
    * @description
+   * Converts DeviationModel to DB object containing metadata.
+   *
+   * @param {DeviationModel} deviation - DeviationModel instance.
+   * @returns {Object} DB object.
+   */
+  static toDbMetadataObject(deviation) {
+    return {
+      views: deviation.views,
+      comments: deviation.comments,
+      favourites: deviation.favourites,
+      downloads: deviation.downloads,
+    };
+  }
+
+  /**
+   * @description
    * Converts DB object to DeviationModel.
    *
    * @param {Object} dbObject - DB object.
@@ -75,25 +92,30 @@ export default class DeviationModelConverter {
     deviation.publishedTime = dbObject.publishedTime;
     deviation.thumbnail = dbObject.thumbnail;
     deviation.preview = dbObject.preview;
+    deviation.views = dbObject.views;
+    deviation.comments = dbObject.comments;
+    deviation.favourites = dbObject.favourites;
+    deviation.downloads = dbObject.downloads;
 
     return deviation;
   }
 
   /**
    * @description
-   * Converts DeviationModel into object for client.
+   * Converts DeviationMetadataModel instance into the DeviationModel to update metadata.
    *
-   * @param {DeviationModel} deviation - DeviationModel instance.
-   * @returns {Object} Object for client.
+   * @param {DeviationMetadataModel} metadata - DeviationMetadataModel instance.
+   * @returns {DeviationModel} DeviationModel instance.
    */
-  static toClientObject(deviation) {
-    return {
-      id: deviation.id,
-      title: deviation.title,
-      url: deviation.url,
-      publishedTime: deviation.publishedTime,
-      thumbnail: deviation.thumbnail,
-      preview: deviation.preview,
-    };
+  static fromMetadata(metadata) {
+    const deviation = new DeviationModel();
+
+    deviation.id = metadata.deviationId;
+    deviation.views = metadata.views;
+    deviation.comments = metadata.comments;
+    deviation.favourites = metadata.favourites;
+    deviation.downloads = metadata.downloads;
+
+    return deviation;
   }
 }

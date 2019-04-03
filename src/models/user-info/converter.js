@@ -60,22 +60,4 @@ export default class UserInfoModelConverter {
 
     return userInfo;
   }
-
-  /**
-   * @description
-   * Converts UserInfoModel into object for client.
-   *
-   * @param {UserInfoModel} userInfo - UserInfoModel instance.
-   * @returns {Object} Object for client.
-   */
-  static toClientObject(userInfo) {
-    return {
-      accessTokenExpires: userInfo.accessTokenExpires,
-      refreshTokenExpires: userInfo.refreshTokenExpires,
-      userId: userInfo.userId,
-      userName: userInfo.userName,
-      userIcon: userInfo.userIcon,
-      userType: userInfo.userType,
-    };
-  }
 }

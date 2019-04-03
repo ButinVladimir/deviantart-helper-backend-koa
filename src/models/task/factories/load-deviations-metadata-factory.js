@@ -12,7 +12,7 @@ export default class LoadDeviationsMetadataTaskModelFactory extends BaseTaskMode
    * @description
    * Creates TaskModel instance.
    *
-   * @param {number} userId - User ID.
+   * @param {string} userId - User ID.
    * @param {string[]} deviationIds - Deviations IDs.
    * @returns {TaskModel} TaskModel instance.
    */

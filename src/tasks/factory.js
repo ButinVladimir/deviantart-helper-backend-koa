@@ -124,6 +124,7 @@ export default class TaskFactory {
       taskModel.params,
       this.deviationApi,
       this.userDao,
+      this.deviationsDao,
       this.deviationsMetadataDao,
       this.config,
     );

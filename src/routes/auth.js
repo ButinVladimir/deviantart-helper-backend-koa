@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import mount from 'koa-mount';
 import grant from 'grant-koa';
-import Router from 'koa-router';
+import Router from 'koa-joi-router';
 import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
 import Config from '../config/config';
@@ -12,11 +12,12 @@ import AuthLogic from '../logic/auth';
  * Adds middlewares to app and router to support auth logic.
  *
  * @param {AuthLogic} authLogic - The auth logic object.
- * @param {Router} router - Koa router.
  * @param {Config} config - The config.
  * @param {Koa} app - The app.
  */
-export default (authLogic, router, config, app) => {
+export default (authLogic, config, app) => {
+  const router = Router();
+
   app.use(mount(routes.AUTH_PREFIX, grant({
     defaults: {
       redirect_uri: config.oauthConfig.redirectUri,
@@ -27,10 +28,11 @@ export default (authLogic, router, config, app) => {
       key: config.oauthConfig.key,
       secret: config.oauthConfig.secret,
       scope: ['user', 'browse'],
-      callback: routes.AUTH_CALLBACK,
+      callback: `${routes.AUTH_PREFIX}${routes.AUTH_CALLBACK}`,
     },
   })));
 
+  // /auth/callback
   router.get(routes.AUTH_CALLBACK, async (ctx) => {
     try {
       if (ctx.session.grant) {
@@ -47,10 +49,11 @@ export default (authLogic, router, config, app) => {
     } catch (e) {
       console.error(e.message);
       console.error(e.stack);
-      ctx.throw(500);
+      ctx.throw(e.status || 500);
     }
   });
 
+  // /auth/revoke
   router.get(routes.AUTH_REVOKE,
     refreshAuthGuard,
     async (ctx) => {
@@ -66,10 +69,11 @@ export default (authLogic, router, config, app) => {
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
-        ctx.throw(500);
+        ctx.throw(e.status || 500);
       }
     });
 
+  // /auth/refresh
   router.get(routes.AUTH_REFRESH,
     refreshAuthGuard,
     async (ctx) => {
@@ -84,7 +88,10 @@ export default (authLogic, router, config, app) => {
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
-        ctx.throw(500);
+        ctx.throw(e.status || 500);
       }
     });
+
+  router.prefix(routes.AUTH_PREFIX);
+  app.use(router.middleware());
 };

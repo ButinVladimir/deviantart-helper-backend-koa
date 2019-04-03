@@ -1,7 +1,9 @@
 import BaseTask from '../base';
 import DeviationApi from '../../api/deviation';
 import UserDao from '../../dao/user';
+import DeviationsDao from '../../dao/deviations';
 import DeviationsMetadataDao from '../../dao/deviations-metadata';
+import DeviationModelConverter from '../../models/deviation/converter';
 import DeviationMetadataModelConverter from '../../models/deviation-metadata/converter';
 import Config from '../../config/config';
 import { fetchUserInfoAndCheckAccessToken } from '../../helper';
@@ -18,16 +20,18 @@ export default class LoadDeviationsMetadataTask extends BaseTask {
    * @param {Object} params - Task parameters.
    * @param {DeviationApi} deviationApi - DeviantArt deviation API.
    * @param {UserDao} userDao - The user DAO.
-   * @param {DeviationsMetadataDao} deviationsMetadataDao - The deviations DAO.
+   * @param {DeviationsDao} deviationsDao - The deviations DAO.
+   * @param {DeviationsMetadataDao} deviationsMetadataDao - The deviations metadata DAO.
    * @param {Config} config - The config.
    */
-  constructor(params, deviationApi, userDao, deviationsMetadataDao, config) {
+  constructor(params, deviationApi, userDao, deviationsDao, deviationsMetadataDao, config) {
     super();
 
     this.setParams(params);
 
     this.deviationApi = deviationApi;
     this.userDao = userDao;
+    this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
     this.config = config;
   }
@@ -68,6 +72,8 @@ export default class LoadDeviationsMetadataTask extends BaseTask {
       console.debug('Got deviations metadata for', userInfo.userName);
 
       await this.deviationsMetadataDao.batchInsert(deviationsMetadata);
+      await this.deviationsDao.batchUpdateMetadata(deviationsMetadata
+        .map(dm => DeviationModelConverter.fromMetadata(dm)));
     }
 
     return [];

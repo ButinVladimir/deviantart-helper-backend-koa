@@ -1,9 +1,12 @@
 export const AUTH_PREFIX = '/auth';
-export const AUTH_CALLBACK = '/auth/callback';
-export const AUTH_REVOKE = '/auth/revoke';
-export const AUTH_REFRESH = '/auth/refresh';
+export const AUTH_CALLBACK = '/callback';
+export const AUTH_REVOKE = '/revoke';
+export const AUTH_REFRESH = '/refresh';
 
-export const USER_INFO = '/user/info';
+export const USER_PREFIX = '/user';
+export const USER_INFO = '/info';
 
-export const DEVIATIONS_LOAD = '/deviations/load';
-export const DEVIATIONS_BROWSE = '/deviations/browse/:offset';
+export const DEVIATIONS_PREFIX = '/deviations';
+export const DEVIATIONS_LOAD = '/load';
+export const DEVIATIONS_BROWSE = '/browse/:page';
+export const DEVIATIONS_DETAILS = '/details/:id';

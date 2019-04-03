@@ -1,7 +1,6 @@
 import { Worker } from 'worker_threads';
 import Koa from 'koa';
 import logger from 'koa-logger';
-import Router from 'koa-router';
 import session from 'koa-session';
 import cors from '@koa/cors';
 import { Db } from 'mongodb';
@@ -13,6 +12,7 @@ import UserApi from './api/user';
 
 import UserDao from './dao/user';
 import DeviationsDao from './dao/deviations';
+import DeviationsMetadataDao from './dao/deviations-metadata';
 
 import AuthLogic from './logic/auth';
 import UserLogic from './logic/user';
@@ -55,18 +55,21 @@ export default (db, schedulerWorker, config) => {
 
     const userDao = new UserDao(db);
     const deviationsDao = new DeviationsDao(db);
+    const deviationsMetadataDao = new DeviationsMetadataDao(db);
 
     const authLogic = new AuthLogic(authApi, userApi, userDao, config);
     const userLogic = new UserLogic(userApi, userDao);
-    const deviationsLogic = new DeviationsLogic(userDao, deviationsDao, schedulerWorker, config);
+    const deviationsLogic = new DeviationsLogic(
+      userDao,
+      deviationsDao,
+      deviationsMetadataDao,
+      schedulerWorker,
+      config,
+    );
 
-    const router = new Router();
-    authRoutes(authLogic, router, config, app);
-    userRoutes(userLogic, router);
-    deviationsRoutes(deviationsLogic, router);
-
-    app.use(router.routes());
-    app.use(router.allowedMethods());
+    authRoutes(authLogic, config, app);
+    userRoutes(userLogic, app);
+    deviationsRoutes(deviationsLogic, app);
 
     return app;
   } catch (error) {
