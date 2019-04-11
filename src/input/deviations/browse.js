@@ -1,9 +1,9 @@
 import * as sort from '../../consts/sort';
 
 /**
- * Filter for 'deviations/browse' route.
+ * Input for 'deviations/browse' route.
  */
-export default class DeviationsBrowseFilter {
+export default class DeviationsBrowseInput {
   constructor() {
     this.publishedTimeBegin = null;
     this.publishedTimeEnd = null;

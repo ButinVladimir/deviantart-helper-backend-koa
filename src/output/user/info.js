@@ -13,12 +13,12 @@ export default class UserInfoOutput {
    */
   static prepareOutput(userInfo) {
     return {
-      accessTokenExpires: userInfo.accessTokenExpires,
-      refreshTokenExpires: userInfo.refreshTokenExpires,
       userId: userInfo.userId,
       userName: userInfo.userName,
       userIcon: userInfo.userIcon,
       userType: userInfo.userType,
+      accessTokenExpires: userInfo.accessTokenExpires,
+      refreshTokenExpires: userInfo.refreshTokenExpires,
     };
   }
 }

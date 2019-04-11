@@ -1,7 +1,7 @@
 /**
- * Filter for 'deviations/details' route.
+ * Input for 'deviations/details' route.
  */
-export default class DeviationsDetailsFilter {
+export default class DeviationsDetailsInput {
   constructor() {
     this.timestampBegin = null;
     this.timestampEnd = null;

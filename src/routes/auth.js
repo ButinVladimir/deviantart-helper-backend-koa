@@ -60,12 +60,8 @@ export default (authLogic, config, app) => {
       try {
         const revokeResult = await authLogic.revoke(ctx.session.userId);
 
-        if (revokeResult) {
-          ctx.session = null;
-          ctx.body = 'Revoked';
-        } else {
-          ctx.throw(500);
-        }
+        ctx.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
+        ctx.session = null;
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
@@ -81,9 +77,9 @@ export default (authLogic, config, app) => {
         const session = await authLogic.refresh(ctx.session.userId);
         if (session) {
           Object.assign(ctx.session, session);
-          ctx.body = 'Refreshed';
+          ctx.body = { status: 'Refreshed' };
         } else {
-          ctx.body = 'Refreshment failed';
+          ctx.body = { status: 'Refreshment has failed' };
         }
       } catch (e) {
         console.error(e.message);

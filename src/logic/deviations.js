@@ -4,8 +4,8 @@ import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
 import Config from '../config/config';
 import LoadDeviationsTaskModelFactory from '../models/task/factories/load-deviations-factory';
-import DeviationsBrowseFilter from '../filter/deviations/browse';
-import DeviationsDetailsFilter from '../filter/deviations/details';
+import DeviationsBrowseInput from '../input/deviations/browse';
+import DeviationsDetailsInput from '../input/deviations/details';
 import DeviationsBrowseOutput from '../output/deviations/browse';
 import DeviationsDetailsOutput from '../output/deviations/details';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
@@ -37,7 +37,7 @@ export default class DeviationsLogic {
    * Fetches all deviations for user.
    *
    * @param {string} userId - The user ID.
-   * @param {DeviationsBrowseFilter} filter - The filter.
+   * @param {DeviationsBrowseInput} filter - The filter.
    * @param {number} page - Current page.
    * @returns {Object[]} Deviations.
    */
@@ -64,7 +64,7 @@ export default class DeviationsLogic {
    *
    * @param {string} userId - The user ID.
    * @param {string} deviationId - The deviation ID.
-   * @param {DeviationsDetailsFilter} filter - The filter.
+   * @param {DeviationsDetailsInput} filter - The filter.
    * @returns {Object[]} Deviations.
    */
   async details(userId, deviationId, filter) {

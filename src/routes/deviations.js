@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import Router, { Joi } from 'koa-joi-router';
-import DeviationsBrowseFilter from '../filter/deviations/browse';
-import DeviationsDetailsFilter from '../filter/deviations/details';
+import DeviationsBrowseInput from '../input/deviations/browse';
+import DeviationsDetailsInput from '../input/deviations/details';
 import * as sort from '../consts/sort';
 import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
@@ -24,7 +24,7 @@ export default (deviationsLogic, app) => {
       try {
         await deviationsLogic.startLoadDeviationsTask(ctx.session.userId);
 
-        ctx.body = 'Task has been created';
+        ctx.body = { status: 'Task has been created' };
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
@@ -71,7 +71,7 @@ export default (deviationsLogic, app) => {
     refreshAuthGuard,
     async (ctx) => {
       try {
-        const filter = new DeviationsBrowseFilter();
+        const filter = new DeviationsBrowseInput();
         filter.publishedTimeBegin = ctx.query.publishedtimebegin || null;
         filter.publishedTimeEnd = ctx.query.publishedtimeend || null;
         filter.title = ctx.query.title || null;
@@ -114,7 +114,7 @@ export default (deviationsLogic, app) => {
     refreshAuthGuard,
     async (ctx) => {
       try {
-        const filter = new DeviationsDetailsFilter();
+        const filter = new DeviationsDetailsInput();
         filter.timestampBegin = ctx.query.timestampbegin || null;
         filter.timestampEnd = ctx.query.timestampend || null;
 
