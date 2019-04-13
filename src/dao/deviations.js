@@ -2,7 +2,7 @@ import { Db } from 'mongodb';
 import { COLLECTION_DEVIATIONS } from '../consts/collections';
 import DeviationModel from '../models/deviation/deviation';
 import DeviationModelConverter from '../models/deviation/converter';
-import DeviationsBrowseFilter from '../filter/deviations/browse';
+import DeviationsBrowseFilter from '../input/deviations/browse';
 
 /**
  * Deviations DAO class.

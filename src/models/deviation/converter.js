@@ -67,6 +67,7 @@ export default class DeviationModelConverter {
    */
   static toDbMetadataObject(deviation) {
     return {
+      description: deviation.description,
       views: deviation.views,
       comments: deviation.comments,
       favourites: deviation.favourites,
@@ -92,6 +93,7 @@ export default class DeviationModelConverter {
     deviation.publishedTime = dbObject.publishedTime;
     deviation.thumbnail = dbObject.thumbnail;
     deviation.preview = dbObject.preview;
+    deviation.description = dbObject.description;
     deviation.views = dbObject.views;
     deviation.comments = dbObject.comments;
     deviation.favourites = dbObject.favourites;
@@ -115,6 +117,7 @@ export default class DeviationModelConverter {
     deviation.comments = metadata.comments;
     deviation.favourites = metadata.favourites;
     deviation.downloads = metadata.downloads;
+    deviation.description = metadata.description;
 
     return deviation;
   }

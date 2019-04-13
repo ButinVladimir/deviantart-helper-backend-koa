@@ -20,6 +20,7 @@ export default class DeviationsDetailsOutput {
         preview: deviation.preview,
         url: deviation.url,
         publishedTime: deviation.publishedTime,
+        description: deviation.description,
         views: deviation.views,
         comments: deviation.comments,
         favourites: deviation.favourites,

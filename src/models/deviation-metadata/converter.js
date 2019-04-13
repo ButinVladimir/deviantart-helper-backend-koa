@@ -16,6 +16,7 @@ export default class DeviationMetadataModelConverter {
 
     deviationMetadata.deviationId = apiObject.deviationid;
     deviationMetadata.timestamp = Date.now();
+    deviationMetadata.description = apiObject.description;
     deviationMetadata.views = apiObject.stats.views;
     deviationMetadata.comments = apiObject.stats.comments;
     deviationMetadata.favourites = apiObject.stats.favourites;

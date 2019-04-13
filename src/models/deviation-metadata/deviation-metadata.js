@@ -10,6 +10,7 @@ export default class DeviationMetadataModel {
     this.deviationId = '';
     this.userId = '';
     this.timestamp = 0;
+    this.description = '';
     this.views = 0;
     this.comments = 0;
     this.favourites = 0;

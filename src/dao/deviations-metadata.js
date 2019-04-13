@@ -2,7 +2,7 @@ import { Db } from 'mongodb';
 import { COLLECTION_DEVIATIONS_METADATA } from '../consts/collections';
 import DeviationMetadataModel from '../models/deviation-metadata/deviation-metadata';
 import DeviationMetadataModelConverter from '../models/deviation-metadata/converter';
-import DeviationsDetailsFilter from '../filter/deviations/details';
+import DeviationsDetailsFilter from '../input/deviations/details';
 
 /**
  * Deviations metadata DAO class.

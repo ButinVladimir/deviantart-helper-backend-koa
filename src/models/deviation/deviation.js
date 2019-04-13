@@ -14,6 +14,7 @@ export default class DeviationModel {
     this.publishedTime = 0;
     this.thumbnail = null;
     this.preview = null;
+    this.description = '';
     this.views = 0;
     this.comments = 0;
     this.favourites = 0;
