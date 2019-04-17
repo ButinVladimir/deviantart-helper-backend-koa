@@ -23,19 +23,20 @@ const config = new Config(
     80 * 24 * 60 * 60 * 1000, // DeviantArt OAuth refresh token window
   ),
   new SchedulerConfig(
-    5, // Number of max attempts per task for task scheduler.
-    1000, // Minimal task scheduler delay.
-    600000, // Maximal task scheduler delay.
+    5, // Number of max attempts per task for task scheduler
+    1000, // Minimal task scheduler delay
+    600000, // Maximal task scheduler delay
     0.75, // Coefficient by which scheduler delay will be multiplied
-    // if task run has been successful.
-    4, // Coefficient by which scheduler delay will be multiplied if task run has failed.
+    // if task run has been successful
+    4, // Coefficient by which scheduler delay will be multiplied if task run has failed
   ),
   new ApiConfig(
     10, // Limit of deviations per page got from DeviantArt API, 1-24
     10, // Limit of deviations metadata per page got from DeviantArt API, 1-10
   ),
   new DaoConfig(
-    30, // Limit of deviations per page got from DAO
+    30, // Limit of deviations per page got from DAO to browse
+    10, // Limit of deviations per page got from DAO to see statistics
   ),
   ENVIRONMENT_DEVELOPMENT, // Environment
 );

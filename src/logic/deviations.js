@@ -6,8 +6,10 @@ import Config from '../config/config';
 import LoadDeviationsTaskModelFactory from '../models/task/factories/load-deviations-factory';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
+import DeviationsStatisticsInput from '../input/deviations/statistics';
 import DeviationsBrowseOutput from '../output/deviations/browse';
 import DeviationsDetailsOutput from '../output/deviations/details';
+import DeviationsStatisticsOutput from '../output/deviations/statistics';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
@@ -37,21 +39,21 @@ export default class DeviationsLogic {
    * Fetches all deviations for user.
    *
    * @param {string} userId - The user ID.
-   * @param {DeviationsBrowseInput} filter - The filter.
+   * @param {DeviationsBrowseInput} input - The input.
    * @param {number} page - Current page.
    * @returns {Object[]} Deviations.
    */
-  async browse(userId, filter, page) {
+  async browse(userId, input, page) {
     await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
     const deviations = await this.deviationsDao.getThumbnailsByUser(
       userId,
-      filter,
+      input,
       page * this.config.daoConfig.limitDeviationsBrowse,
       this.config.daoConfig.limitDeviationsBrowse,
     );
     const pagesCount = Math.ceil(
-      (await this.deviationsDao.getCountByUser(userId, filter))
+      (await this.deviationsDao.getCountByUser(userId, input))
         / this.config.daoConfig.limitDeviationsBrowse,
     );
 
@@ -64,10 +66,10 @@ export default class DeviationsLogic {
    *
    * @param {string} userId - The user ID.
    * @param {string} deviationId - The deviation ID.
-   * @param {DeviationsDetailsInput} filter - The filter.
+   * @param {DeviationsDetailsInput} input - The input.
    * @returns {Object[]} Deviations.
    */
-  async details(userId, deviationId, filter) {
+  async details(userId, deviationId, input) {
     await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
     const deviation = await this.deviationsDao.getByIdAndUser(
@@ -79,9 +81,39 @@ export default class DeviationsLogic {
       return null;
     }
 
-    const metadata = await this.deviationsMetadataDao.getByIdAndUser(userId, deviationId, filter);
+    const metadata = await this.deviationsMetadataDao.getByIdAndUser(userId, deviationId, input);
 
     return DeviationsDetailsOutput.prepareOutput(deviation, metadata);
+  }
+
+  /**
+   * @description
+   * Fetches deviations statistics for user.
+   *
+   * @param {string} userId - The user ID.
+   * @param {DeviationsStatisticsInput} input - The input.
+   * @param {number} page - Current page.
+   * @returns {Object[]} Deviations.
+   */
+  async statistics(userId, input, page) {
+    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+
+    const deviations = await this.deviationsDao.getStatisticsByUser(
+      userId,
+      input,
+      page * this.config.daoConfig.limitDeviationsStatistics,
+      this.config.daoConfig.limitDeviationsStatistics,
+    );
+
+    const metadata = deviations.length > 0
+      ? await this.deviationsMetadataDao.getByIdsAndUser(
+        userId,
+        deviations.map(d => d.id),
+        input,
+      )
+      : [];
+
+    return DeviationsStatisticsOutput.prepareOutput(deviations, metadata);
   }
 
   /**

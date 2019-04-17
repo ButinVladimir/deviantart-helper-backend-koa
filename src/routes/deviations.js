@@ -2,6 +2,7 @@ import Koa from 'koa';
 import Router, { Joi } from 'koa-joi-router';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
+import DeviationsStatisticsInput from '../input/deviations/statistics';
 import * as sort from '../consts/sort';
 import refreshAuthGuard from './refresh-auth-guard';
 import * as routes from '../consts/routes';
@@ -71,16 +72,16 @@ export default (deviationsLogic, app) => {
     refreshAuthGuard,
     async (ctx) => {
       try {
-        const filter = new DeviationsBrowseInput();
-        filter.publishedTimeBegin = ctx.query.publishedtimebegin || null;
-        filter.publishedTimeEnd = ctx.query.publishedtimeend || null;
-        filter.title = ctx.query.title || null;
-        filter.sortField = ctx.query.sortfield;
-        filter.sortOrder = ctx.query.sortorder;
+        const input = new DeviationsBrowseInput();
+        input.publishedTimeBegin = ctx.query.publishedtimebegin || null;
+        input.publishedTimeEnd = ctx.query.publishedtimeend || null;
+        input.title = ctx.query.title || null;
+        input.sortField = ctx.query.sortfield;
+        input.sortOrder = ctx.query.sortorder;
 
         ctx.body = await deviationsLogic.browse(
           ctx.session.userId,
-          filter,
+          input,
           ctx.params.page,
         );
       } catch (e) {
@@ -114,14 +115,14 @@ export default (deviationsLogic, app) => {
     refreshAuthGuard,
     async (ctx) => {
       try {
-        const filter = new DeviationsDetailsInput();
-        filter.timestampBegin = ctx.query.timestampbegin || null;
-        filter.timestampEnd = ctx.query.timestampend || null;
+        const input = new DeviationsDetailsInput();
+        input.timestampBegin = ctx.query.timestampbegin || null;
+        input.timestampEnd = ctx.query.timestampend || null;
 
         const output = await deviationsLogic.details(
           ctx.session.userId,
           ctx.params.id,
-          filter,
+          input,
         );
 
         if (output === null) {
@@ -129,6 +130,74 @@ export default (deviationsLogic, app) => {
         }
 
         ctx.body = output;
+      } catch (e) {
+        console.error(e.message);
+        console.error(e.stack);
+        ctx.throw(e.status || 500);
+      }
+    });
+
+  // /deviations/statistics/:page
+  router.get(routes.DEVIATIONS_STATISTICS,
+    {
+      validate: {
+        params: {
+          page: Joi.number().integer().min(0).required(),
+        },
+        query: {
+          publishedtimebegin: Joi
+            .number()
+            .integer()
+            .positive(),
+          publishedtimeend: Joi
+            .number()
+            .integer()
+            .positive(),
+          title: Joi
+            .string(),
+          sortfield: Joi
+            .string()
+            .valid(
+              sort.FIELD_PUBLISHED_TIME,
+              sort.FIELD_TITLE,
+              sort.FIELD_VIEWS,
+              sort.FIELD_COMMENTS,
+              sort.FIELD_FAVOURITES,
+              sort.FIELD_DOWNLOADS,
+            )
+            .default(sort.FIELD_VIEWS),
+          sortorder: Joi
+            .number()
+            .valid(sort.ORDER_ASC, sort.ORDER_DESC)
+            .default(sort.ORDER_DESC),
+          timestampbegin: Joi
+            .number()
+            .integer()
+            .positive(),
+          timestampend: Joi
+            .number()
+            .integer()
+            .positive(),
+        },
+      },
+    },
+    refreshAuthGuard,
+    async (ctx) => {
+      try {
+        const input = new DeviationsStatisticsInput();
+        input.publishedTimeBegin = ctx.query.publishedtimebegin || null;
+        input.publishedTimeEnd = ctx.query.publishedtimeend || null;
+        input.title = ctx.query.title || null;
+        input.sortField = ctx.query.sortfield;
+        input.sortOrder = ctx.query.sortorder;
+        input.timestampBegin = ctx.query.timestampbegin;
+        input.timestampEnd = ctx.query.timestampend;
+
+        ctx.body = await deviationsLogic.statistics(
+          ctx.session.userId,
+          input,
+          ctx.params.page,
+        );
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);

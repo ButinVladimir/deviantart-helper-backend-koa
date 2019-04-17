@@ -10,3 +10,4 @@ export const DEVIATIONS_PREFIX = '/deviations';
 export const DEVIATIONS_LOAD = '/load';
 export const DEVIATIONS_BROWSE = '/browse/:page';
 export const DEVIATIONS_DETAILS = '/details/:id';
+export const DEVIATIONS_STATISTICS = '/statistics/:page';
