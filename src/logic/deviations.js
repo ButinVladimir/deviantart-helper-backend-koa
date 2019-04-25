@@ -52,12 +52,12 @@ export default class DeviationsLogic {
       page * this.config.daoConfig.limitDeviationsBrowse,
       this.config.daoConfig.limitDeviationsBrowse,
     );
-    const pagesCount = Math.ceil(
+    const pageCount = Math.ceil(
       (await this.deviationsDao.getCountByUser(userId, input))
         / this.config.daoConfig.limitDeviationsBrowse,
     );
 
-    return DeviationsBrowseOutput.prepareOutput(deviations, pagesCount);
+    return DeviationsBrowseOutput.prepareOutput(deviations, pageCount);
   }
 
   /**

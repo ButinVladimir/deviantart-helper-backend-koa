@@ -9,10 +9,10 @@ export default class DeviationsBrowseOutput {
    * Prepares DeviationModel and pagination parameters to output for client.
    *
    * @param {DeviationModel[]} deviations - DeviationModel instances.
-   * @param {number} pagesCount - Count of pages with deviations for user.
+   * @param {number} pageCount - Count of pages with deviations for user.
    * @returns {Object} Object for client.
    */
-  static prepareOutput(deviations, pagesCount) {
+  static prepareOutput(deviations, pageCount) {
     return {
       deviations: deviations.map(d => ({
         id: d.id,
@@ -25,7 +25,7 @@ export default class DeviationsBrowseOutput {
         favourites: d.favourites,
         downloads: d.downloads,
       })),
-      pagesCount,
+      pageCount,
     };
   }
 }
