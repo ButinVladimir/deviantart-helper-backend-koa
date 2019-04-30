@@ -114,7 +114,6 @@ export default class DeviationsDao {
         {
           projection: {
             _id: 0,
-            thumbnail: 0,
             userId: 0,
           },
         },

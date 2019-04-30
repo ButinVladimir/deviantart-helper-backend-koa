@@ -17,6 +17,7 @@ export default class DeviationsDetailsOutput {
     return {
       deviation: {
         title: deviation.title,
+        thumbnail: deviation.thumbnail,
         preview: deviation.preview,
         url: deviation.url,
         publishedTime: deviation.publishedTime,
