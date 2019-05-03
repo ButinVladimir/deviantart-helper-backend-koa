@@ -66,6 +66,9 @@ export default (deviationsLogic, app) => {
             .number()
             .valid(sort.ORDER_ASC, sort.ORDER_DESC)
             .default(sort.ORDER_DESC),
+          nsfw: Joi
+            .bool()
+            .default(null),
         },
       },
     },
@@ -78,6 +81,9 @@ export default (deviationsLogic, app) => {
         input.title = ctx.query.title || null;
         input.sortField = ctx.query.sortfield;
         input.sortOrder = ctx.query.sortorder;
+        if (ctx.query.nsfw !== null) {
+          input.nsfw = ctx.query.nsfw;
+        }
 
         ctx.body = await deviationsLogic.browse(
           ctx.session.userId,

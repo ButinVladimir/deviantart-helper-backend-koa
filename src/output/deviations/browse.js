@@ -24,6 +24,7 @@ export default class DeviationsBrowseOutput {
         comments: d.comments,
         favourites: d.favourites,
         downloads: d.downloads,
+        nsfw: d.nsfw,
       })),
       pageCount,
     };

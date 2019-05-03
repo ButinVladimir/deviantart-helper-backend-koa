@@ -26,6 +26,7 @@ export default class DeviationsDetailsOutput {
         comments: deviation.comments,
         favourites: deviation.favourites,
         downloads: deviation.downloads,
+        nsfw: deviation.nsfw,
       },
       metadata: metadata.map(dm => ({
         timestamp: dm.timestamp,

@@ -217,6 +217,10 @@ export default class DeviationsDao {
       };
     }
 
+    if (input.nsfw !== null) {
+      query.nsfw = input.nsfw;
+    }
+
     return query;
   }
 

@@ -21,6 +21,7 @@ export default class GalleryApi {
     const params = {
       offset,
       limit,
+      mature_content: true,
     };
 
     const response = await axios.get(

@@ -19,5 +19,6 @@ export default class DeviationModel {
     this.comments = 0;
     this.favourites = 0;
     this.downloads = 0;
+    this.nsfw = false;
   }
 }

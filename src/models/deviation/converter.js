@@ -20,6 +20,7 @@ export default class DeviationModelConverter {
     deviation.title = apiObject.title;
     deviation.url = apiObject.url;
     deviation.publishedTime = Number.parseInt(apiObject.published_time, 10) * 1000;
+    deviation.nsfw = apiObject.is_mature;
 
     if (apiObject.thumbs && apiObject.thumbs.length > 0) {
       deviation.thumbnail = {
@@ -55,6 +56,7 @@ export default class DeviationModelConverter {
       publishedTime: deviation.publishedTime,
       thumbnail: deviation.thumbnail,
       preview: deviation.preview,
+      nsfw: deviation.nsfw,
     };
   }
 
@@ -98,6 +100,7 @@ export default class DeviationModelConverter {
     deviation.comments = dbObject.comments;
     deviation.favourites = dbObject.favourites;
     deviation.downloads = dbObject.downloads;
+    deviation.nsfw = dbObject.nsfw;
 
     return deviation;
   }
