@@ -10,6 +10,7 @@ export default class DeviationsStatisticsInput {
     this.title = null;
     this.sortField = sort.FIELD_PUBLISHED_TIME;
     this.sortOrder = sort.ORDER_DESC;
+    this.nsfw = null;
     this.timestampBegin = null;
     this.timestampEnd = null;
   }

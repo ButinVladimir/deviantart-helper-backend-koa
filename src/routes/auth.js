@@ -42,9 +42,9 @@ export default (authLogic, config, app) => {
 
         delete ctx.session.grant;
 
-        ctx.body = 'Granted';
+        ctx.response.body = 'Granted';
       } else {
-        ctx.body = 'Callback data is missing';
+        ctx.response.body = 'Callback data is missing';
       }
     } catch (e) {
       console.error(e.message);
@@ -60,7 +60,7 @@ export default (authLogic, config, app) => {
       try {
         const revokeResult = await authLogic.revoke(ctx.session.userId);
 
-        ctx.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
+        ctx.response.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
         ctx.session = null;
       } catch (e) {
         console.error(e.message);
@@ -77,9 +77,9 @@ export default (authLogic, config, app) => {
         const session = await authLogic.refresh(ctx.session.userId);
         if (session) {
           Object.assign(ctx.session, session);
-          ctx.body = { status: 'Refreshed' };
+          ctx.response.body = { status: 'Refreshed' };
         } else {
-          ctx.body = { status: 'Refreshment has failed' };
+          ctx.response.body = { status: 'Refreshment has failed' };
         }
       } catch (e) {
         console.error(e.message);

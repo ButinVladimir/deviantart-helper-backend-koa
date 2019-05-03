@@ -19,7 +19,7 @@ export default (userLogic, app) => {
     refreshAuthGuard,
     async (ctx) => {
       try {
-        ctx.body = await userLogic.getInfo(ctx.session.userId);
+        ctx.response.body = await userLogic.getInfo(ctx.session.userId);
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);

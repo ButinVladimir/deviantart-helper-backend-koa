@@ -25,7 +25,7 @@ export default (deviationsLogic, app) => {
       try {
         await deviationsLogic.startLoadDeviationsTask(ctx.session.userId);
 
-        ctx.body = { status: 'Task has been created' };
+        ctx.response.body = { status: 'Task has been created' };
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
@@ -34,13 +34,14 @@ export default (deviationsLogic, app) => {
     });
 
   // /deviations/browse/:page
-  router.get(routes.DEVIATIONS_BROWSE,
+  router.post(routes.DEVIATIONS_BROWSE,
     {
       validate: {
         params: {
           page: Joi.number().integer().min(0).required(),
         },
-        query: {
+        type: 'json',
+        body: {
           publishedtimebegin: Joi
             .number()
             .integer()
@@ -76,16 +77,16 @@ export default (deviationsLogic, app) => {
     async (ctx) => {
       try {
         const input = new DeviationsBrowseInput();
-        input.publishedTimeBegin = ctx.query.publishedtimebegin || null;
-        input.publishedTimeEnd = ctx.query.publishedtimeend || null;
-        input.title = ctx.query.title || null;
-        input.sortField = ctx.query.sortfield;
-        input.sortOrder = ctx.query.sortorder;
-        if (ctx.query.nsfw !== null) {
-          input.nsfw = ctx.query.nsfw;
+        input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
+        input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
+        input.title = ctx.request.body.title || null;
+        input.sortField = ctx.request.body.sortfield;
+        input.sortOrder = ctx.request.body.sortorder;
+        if (ctx.request.body.nsfw !== null) {
+          input.nsfw = ctx.request.body.nsfw;
         }
 
-        ctx.body = await deviationsLogic.browse(
+        ctx.response.body = await deviationsLogic.browse(
           ctx.session.userId,
           input,
           ctx.params.page,
@@ -135,7 +136,7 @@ export default (deviationsLogic, app) => {
           ctx.throw(404);
         }
 
-        ctx.body = output;
+        ctx.response.body = output;
       } catch (e) {
         console.error(e.message);
         console.error(e.stack);
@@ -144,13 +145,14 @@ export default (deviationsLogic, app) => {
     });
 
   // /deviations/statistics/:page
-  router.get(routes.DEVIATIONS_STATISTICS,
+  router.post(routes.DEVIATIONS_STATISTICS,
     {
       validate: {
         params: {
           page: Joi.number().integer().min(0).required(),
         },
-        query: {
+        type: 'json',
+        body: {
           publishedtimebegin: Joi
             .number()
             .integer()
@@ -191,15 +193,15 @@ export default (deviationsLogic, app) => {
     async (ctx) => {
       try {
         const input = new DeviationsStatisticsInput();
-        input.publishedTimeBegin = ctx.query.publishedtimebegin || null;
-        input.publishedTimeEnd = ctx.query.publishedtimeend || null;
-        input.title = ctx.query.title || null;
-        input.sortField = ctx.query.sortfield;
-        input.sortOrder = ctx.query.sortorder;
-        input.timestampBegin = ctx.query.timestampbegin;
-        input.timestampEnd = ctx.query.timestampend;
+        input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
+        input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
+        input.title = ctx.request.body.title || null;
+        input.sortField = ctx.request.body.sortfield;
+        input.sortOrder = ctx.request.body.sortorder;
+        input.timestampBegin = ctx.request.body.timestampbegin;
+        input.timestampEnd = ctx.request.body.timestampend;
 
-        ctx.body = await deviationsLogic.statistics(
+        ctx.response.body = await deviationsLogic.statistics(
           ctx.session.userId,
           input,
           ctx.params.page,
