@@ -62,28 +62,4 @@ export default class AuthLogic {
 
     return false;
   }
-
-  /**
-   * @description
-   * Refreshes user session.
-   *
-   * @param {string} userId - The user id.
-   * @returns {Object} Session data object.
-   */
-  async refresh(userId) {
-    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
-    userInfo.addRefreshmentData(
-      await this.authApi.refresh(
-        this.config.oauthConfig.key,
-        this.config.oauthConfig.secret,
-        userInfo.refreshToken,
-      ),
-      this.config,
-    );
-
-    await this.userDao.update(userInfo);
-
-    return UserInfoModelConverter.toSessionData(userInfo);
-  }
 }

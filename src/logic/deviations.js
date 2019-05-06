@@ -6,9 +6,11 @@ import Config from '../config/config';
 import LoadDeviationsTaskModelFactory from '../models/task/factories/load-deviations-factory';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
+import DeviationsMetadataInput from '../input/deviations/metadata';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
 import DeviationsBrowseOutput from '../output/deviations/browse';
 import DeviationsDetailsOutput from '../output/deviations/details';
+import DeviationsMetadataOutput from '../output/deviations/metadata';
 import DeviationsStatisticsOutput from '../output/deviations/statistics';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
@@ -67,7 +69,7 @@ export default class DeviationsLogic {
    * @param {string} userId - The user ID.
    * @param {string} deviationId - The deviation ID.
    * @param {DeviationsDetailsInput} input - The input.
-   * @returns {Object[]} Deviations.
+   * @returns {Object} Deviation details.
    */
   async details(userId, deviationId, input) {
     await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
@@ -81,9 +83,30 @@ export default class DeviationsLogic {
       return null;
     }
 
-    const metadata = await this.deviationsMetadataDao.getByIdAndUser(userId, deviationId, input);
+    const metadata = input.metadata
+      ? await this.deviationsMetadataDao.getByIdAndUser(userId, deviationId, input)
+      : null;
 
     return DeviationsDetailsOutput.prepareOutput(deviation, metadata);
+  }
+
+  /**
+   * @description
+   * Fetches deviations metadata for user.
+   *
+   * @param {string} userId - The user ID.
+   * @param {DeviationsMetadataInput} input - The input.
+   * @returns {Object} Metadata.
+   */
+  async metadata(userId, input) {
+    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+
+    const metadata = input.deviationIds
+      ? await this.deviationsMetadataDao
+        .getByIdsAndUser(userId, input.deviationIds, input)
+      : [];
+
+    return DeviationsMetadataOutput.prepareOutput(metadata);
   }
 
   /**
@@ -93,7 +116,7 @@ export default class DeviationsLogic {
    * @param {string} userId - The user ID.
    * @param {DeviationsStatisticsInput} input - The input.
    * @param {number} page - Current page.
-   * @returns {Object[]} Deviations.
+   * @returns {Object} Deviations statistics.
    */
   async statistics(userId, input, page) {
     await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);

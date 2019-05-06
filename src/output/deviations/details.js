@@ -7,7 +7,7 @@ import DeviationMetadataModel from '../../models/deviation-metadata/deviation-me
 export default class DeviationsDetailsOutput {
   /**
    * @description
-   * Prepares DeviationModel and pagination parameters to output for client.
+   * Prepares DeviationModel and DeviationMetadataModel objects to output for client.
    *
    * @param {DeviationModel} deviation - DeviationModel instance.
    * @param {DeviationMetadataModel[]} metadata - Instances of DeviationMetadataModel.
@@ -28,13 +28,15 @@ export default class DeviationsDetailsOutput {
         downloads: deviation.downloads,
         nsfw: deviation.nsfw,
       },
-      metadata: metadata.map(dm => ({
-        timestamp: dm.timestamp,
-        views: dm.views,
-        comments: dm.comments,
-        favourites: dm.favourites,
-        downloads: dm.downloads,
-      })),
+      metadata: metadata
+        ? metadata.map(dm => ({
+          timestamp: dm.timestamp,
+          views: dm.views,
+          comments: dm.comments,
+          favourites: dm.favourites,
+          downloads: dm.downloads,
+        }))
+        : null,
     };
   }
 }

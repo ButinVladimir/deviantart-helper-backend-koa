@@ -2,6 +2,7 @@ import Koa from 'koa';
 import Router, { Joi } from 'koa-joi-router';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
+import DeviationsMetadataInput from '../input/deviations/metadata';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
 import * as sort from '../consts/sort';
 import refreshAuthGuard from './refresh-auth-guard';
@@ -116,6 +117,9 @@ export default (deviationsLogic, app) => {
             .number()
             .integer()
             .positive(),
+          metadata: Joi
+            .bool()
+            .default(false),
         },
       },
     },
@@ -125,6 +129,7 @@ export default (deviationsLogic, app) => {
         const input = new DeviationsDetailsInput();
         input.timestampBegin = ctx.query.timestampbegin || null;
         input.timestampEnd = ctx.query.timestampend || null;
+        input.metadata = ctx.query.metadata || false;
 
         const output = await deviationsLogic.details(
           ctx.session.userId,
@@ -135,6 +140,47 @@ export default (deviationsLogic, app) => {
         if (output === null) {
           ctx.throw(404);
         }
+
+        ctx.response.body = output;
+      } catch (e) {
+        console.error(e.message);
+        console.error(e.stack);
+        ctx.throw(e.status || 500);
+      }
+    });
+
+  // /deviations/metadata
+  router.post(routes.DEVIATIONS_METADATA,
+    {
+      validate: {
+        type: 'json',
+        body: {
+          ids: Joi
+            .array()
+            .items(Joi.string()),
+          timestampbegin: Joi
+            .number()
+            .integer()
+            .positive(),
+          timestampend: Joi
+            .number()
+            .integer()
+            .positive(),
+        },
+      },
+    },
+    refreshAuthGuard,
+    async (ctx) => {
+      try {
+        const input = new DeviationsMetadataInput();
+        input.deviationIds = ctx.request.body.ids || [];
+        input.timestampBegin = ctx.request.body.timestampbegin || null;
+        input.timestampEnd = ctx.request.body.timestampend || null;
+
+        const output = await deviationsLogic.metadata(
+          ctx.session.userId,
+          input,
+        );
 
         ctx.response.body = output;
       } catch (e) {

@@ -7,7 +7,8 @@ import DeviationMetadataModel from '../../models/deviation-metadata/deviation-me
 export default class DeviationsStatisticsOutput {
   /**
    * @description
-   * Prepares DeviationModel and pagination parameters to output for client.
+   * Prepares DeviationModel, DeviationMetadataModel objects
+   * and pagination parameters to output for client.
    *
    * @param {DeviationModel[]} deviations - DeviationModel instances.
    * @param {DeviationMetadataModel[]} metadata - Instances of DeviationMetadataModel.

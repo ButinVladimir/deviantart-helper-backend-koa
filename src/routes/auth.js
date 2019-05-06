@@ -69,25 +69,6 @@ export default (authLogic, config, app) => {
       }
     });
 
-  // /auth/refresh
-  router.get(routes.AUTH_REFRESH,
-    refreshAuthGuard,
-    async (ctx) => {
-      try {
-        const session = await authLogic.refresh(ctx.session.userId);
-        if (session) {
-          Object.assign(ctx.session, session);
-          ctx.response.body = { status: 'Refreshed' };
-        } else {
-          ctx.response.body = { status: 'Refreshment has failed' };
-        }
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
-    });
-
   router.prefix(routes.AUTH_PREFIX);
   app.use(router.middleware());
 };

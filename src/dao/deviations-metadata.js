@@ -3,6 +3,7 @@ import { COLLECTION_DEVIATIONS_METADATA } from '../consts/collections';
 import DeviationMetadataModel from '../models/deviation-metadata/deviation-metadata';
 import DeviationMetadataModelConverter from '../models/deviation-metadata/converter';
 import DeviationsDetailsInput from '../input/deviations/details';
+import DeviationsMetadataInput from '../input/deviations/metadata';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
 
 /**
@@ -48,10 +49,10 @@ export default class DeviationsMetadataDao {
    * @param {string} userId - The user ID.
    * @param {string} deviationId - The deviation ID.
    * @param {DeviationsDetailsInput} input - The input.
-   * @returns {DeviationMetadataModel[]} Fetched deviation.
+   * @returns {DeviationMetadataModel[]} Fetched deviation metadata.
    */
   async getByIdAndUser(userId, deviationId, input) {
-    const query = DeviationsMetadataDao.prepareDetailsQuery(userId, deviationId, input);
+    const query = DeviationsMetadataDao.prepareQueryById(userId, deviationId, input);
 
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS_METADATA).find(
       query,
@@ -75,11 +76,11 @@ export default class DeviationsMetadataDao {
    *
    * @param {string} userId - The user ID.
    * @param {string[]} deviationIds - The deviation ID.
-   * @param {DeviationsDetailsInput} input - The input.
-   * @returns {DeviationMetadataModel[]} Fetched deviation.
+   * @param {DeviationsMetadataInput|DeviationsStatisticsInput} input - The input.
+   * @returns {DeviationMetadataModel[]} Fetched deviation metadata.
    */
   async getByIdsAndUser(userId, deviationIds, input) {
-    const query = DeviationsMetadataDao.prepareStatisticsQuery(userId, deviationIds, input);
+    const query = DeviationsMetadataDao.prepareQueryByIds(userId, deviationIds, input);
 
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS_METADATA).find(
       query,
@@ -104,7 +105,7 @@ export default class DeviationsMetadataDao {
    * @param {DeviationsDetailsInput} input - The input.
    * @returns {Object} The query.
    */
-  static prepareDetailsQuery(userId, deviationId, input) {
+  static prepareQueryById(userId, deviationId, input) {
     const query = { userId, deviationId };
 
     if (input.timestampBegin || input.timestampEnd) {
@@ -124,14 +125,14 @@ export default class DeviationsMetadataDao {
 
   /**
    * @description
-   * Prepares query to fetch deviations metadata by user ID and deviation ID.
+   * Prepares query to fetch deviations metadata by user ID and deviation IDs.
    *
    * @param {string} userId  - The user ID.
    * @param {string[]} deviationIds - The deviation IDs.
-   * @param {DeviationsStatisticsInput} input - The input.
+   * @param {DeviationsMetadataInput|DeviationsStatisticsInput} input - The input.
    * @returns {Object} The query.
    */
-  static prepareStatisticsQuery(userId, deviationIds, input) {
+  static prepareQueryByIds(userId, deviationIds, input) {
     const query = {
       userId,
       deviationId: {

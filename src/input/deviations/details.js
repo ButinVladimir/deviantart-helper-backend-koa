@@ -5,5 +5,6 @@ export default class DeviationsDetailsInput {
   constructor() {
     this.timestampBegin = null;
     this.timestampEnd = null;
+    this.metadata = false;
   }
 }
