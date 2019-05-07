@@ -5,6 +5,30 @@ import DeviationMetadataModel from '../../models/deviation-metadata/deviation-me
  */
 export default class DeviationsMetadataOutput {
   /**
+  * @description
+  * Parses DeviationMetadataModel objects and creates object with metadata.
+  *
+  * @param {DeviationMetadataModel[]} metadata - Instances of DeviationMetadataModel.
+  * @returns {Object} Object with metadata for client.
+  */
+  static prepareMetadata(metadata) {
+    const result = {};
+
+    metadata.forEach((dm) => {
+      result[dm.deviationId] = result[dm.deviationId] || [];
+      result[dm.deviationId].push({
+        timestamp: dm.timestamp,
+        views: dm.views,
+        comments: dm.comments,
+        favourites: dm.favourites,
+        downloads: dm.downloads,
+      });
+    });
+
+    return result;
+  }
+
+  /**
    * @description
    * Prepares DeviationMetadataModel objects to output for client.
    *
@@ -13,14 +37,7 @@ export default class DeviationsMetadataOutput {
    */
   static prepareOutput(metadata) {
     return {
-      metadata: metadata.map(dm => ({
-        deviationId: dm.deviationId,
-        timestamp: dm.timestamp,
-        views: dm.views,
-        comments: dm.comments,
-        favourites: dm.favourites,
-        downloads: dm.downloads,
-      })),
+      metadata: DeviationsMetadataOutput.prepareMetadata(metadata),
     };
   }
 }

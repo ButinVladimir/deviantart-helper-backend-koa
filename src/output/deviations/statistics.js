@@ -1,5 +1,6 @@
 import DeviationModel from '../../models/deviation/deviation';
 import DeviationMetadataModel from '../../models/deviation-metadata/deviation-metadata';
+import DeviationsMetadataOutput from './metadata';
 
 /**
  * Class to prepare output for 'deviations/statistics' route.
@@ -27,14 +28,7 @@ export default class DeviationsStatisticsOutput {
         favourites: d.favourites,
         downloads: d.downloads,
       })),
-      metadata: metadata.map(dm => ({
-        deviationId: dm.deviationId,
-        timestamp: dm.timestamp,
-        views: dm.views,
-        comments: dm.comments,
-        favourites: dm.favourites,
-        downloads: dm.downloads,
-      })),
+      metadata: DeviationsMetadataOutput.prepareMetadata(metadata),
     };
   }
 }

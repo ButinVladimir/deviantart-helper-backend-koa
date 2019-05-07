@@ -210,6 +210,13 @@ export default class DeviationsDao {
       query.publishedTime.$lte = input.publishedTimeEnd;
     }
 
+    if (input.deviationIds) {
+      // eslint-disable-next-line no-underscore-dangle
+      query._id = {
+        $in: input.deviationIds,
+      };
+    }
+
     if (input.title) {
       query.title = {
         $regex: input.title,

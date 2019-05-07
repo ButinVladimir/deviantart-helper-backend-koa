@@ -43,6 +43,9 @@ export default (deviationsLogic, app) => {
         },
         type: 'json',
         body: {
+          ids: Joi
+            .array()
+            .items(Joi.string()),
           publishedtimebegin: Joi
             .number()
             .integer()
@@ -78,6 +81,7 @@ export default (deviationsLogic, app) => {
     async (ctx) => {
       try {
         const input = new DeviationsBrowseInput();
+        input.deviationIds = ctx.request.body.ids || null;
         input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
         input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
         input.title = ctx.request.body.title || null;
@@ -199,6 +203,9 @@ export default (deviationsLogic, app) => {
         },
         type: 'json',
         body: {
+          ids: Joi
+            .array()
+            .items(Joi.string()),
           publishedtimebegin: Joi
             .number()
             .integer()
@@ -232,6 +239,9 @@ export default (deviationsLogic, app) => {
             .number()
             .integer()
             .positive(),
+          nsfw: Joi
+            .bool()
+            .default(null),
         },
       },
     },
@@ -239,6 +249,7 @@ export default (deviationsLogic, app) => {
     async (ctx) => {
       try {
         const input = new DeviationsStatisticsInput();
+        input.deviationIds = ctx.request.body.ids || null;
         input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
         input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
         input.title = ctx.request.body.title || null;
@@ -246,6 +257,9 @@ export default (deviationsLogic, app) => {
         input.sortOrder = ctx.request.body.sortorder;
         input.timestampBegin = ctx.request.body.timestampbegin;
         input.timestampEnd = ctx.request.body.timestampend;
+        if (ctx.request.body.nsfw !== null) {
+          input.nsfw = ctx.request.body.nsfw;
+        }
 
         ctx.response.body = await deviationsLogic.statistics(
           ctx.session.userId,

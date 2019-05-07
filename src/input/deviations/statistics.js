@@ -5,6 +5,7 @@ import * as sort from '../../consts/sort';
  */
 export default class DeviationsStatisticsInput {
   constructor() {
+    this.deviationIds = null;
     this.publishedTimeBegin = null;
     this.publishedTimeEnd = null;
     this.title = null;
