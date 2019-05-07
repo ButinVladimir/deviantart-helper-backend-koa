@@ -13,9 +13,10 @@ export default class DeviationsStatisticsOutput {
    *
    * @param {DeviationModel[]} deviations - DeviationModel instances.
    * @param {DeviationMetadataModel[]} metadata - Instances of DeviationMetadataModel.
+   * @param {number} pageCount - Count of pages with deviations for user.
    * @returns {Object} Object for client.
    */
-  static prepareOutput(deviations, metadata) {
+  static prepareOutput(deviations, metadata, pageCount) {
     return {
       deviations: deviations.map(d => ({
         id: d.id,
@@ -27,8 +28,10 @@ export default class DeviationsStatisticsOutput {
         comments: d.comments,
         favourites: d.favourites,
         downloads: d.downloads,
+        nsfw: d.nsfw,
       })),
-      metadata: DeviationsMetadataOutput.prepareMetadata(metadata),
+      metadata: metadata ? DeviationsMetadataOutput.prepareMetadata(metadata) : null,
+      pageCount,
     };
   }
 }

@@ -162,6 +162,7 @@ export default class DeviationsDao {
           url: 1,
           publishedTime: 1,
           thumbnail: 1,
+          nsfw: 1,
           views: { $subtract: ['$periodEndData.views', '$periodBeginData.views'] },
           favourites: { $subtract: ['$periodEndData.favourites', '$periodBeginData.favourites'] },
           comments: { $subtract: ['$periodEndData.comments', '$periodBeginData.comments'] },

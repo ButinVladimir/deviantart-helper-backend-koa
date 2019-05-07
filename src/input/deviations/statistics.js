@@ -14,5 +14,6 @@ export default class DeviationsStatisticsInput {
     this.nsfw = null;
     this.timestampBegin = null;
     this.timestampEnd = null;
+    this.metadata = false;
   }
 }

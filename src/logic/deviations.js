@@ -128,15 +128,23 @@ export default class DeviationsLogic {
       this.config.daoConfig.limitDeviationsStatistics,
     );
 
-    const metadata = deviations.length > 0
-      ? await this.deviationsMetadataDao.getByIdsAndUser(
-        userId,
-        deviations.map(d => d.id),
-        input,
-      )
-      : [];
+    let metadata = null;
+    if (input.metadata) {
+      metadata = deviations.length > 0
+        ? await this.deviationsMetadataDao.getByIdsAndUser(
+          userId,
+          deviations.map(d => d.id),
+          input,
+        )
+        : [];
+    }
 
-    return DeviationsStatisticsOutput.prepareOutput(deviations, metadata);
+    const pageCount = Math.ceil(
+      (await this.deviationsDao.getCountByUser(userId, input))
+        / this.config.daoConfig.limitDeviationsStatistics,
+    );
+
+    return DeviationsStatisticsOutput.prepareOutput(deviations, metadata, pageCount);
   }
 
   /**

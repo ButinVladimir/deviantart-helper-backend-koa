@@ -242,6 +242,9 @@ export default (deviationsLogic, app) => {
           nsfw: Joi
             .bool()
             .default(null),
+          metadata: Joi
+            .bool()
+            .default(false),
         },
       },
     },
@@ -260,6 +263,7 @@ export default (deviationsLogic, app) => {
         if (ctx.request.body.nsfw !== null) {
           input.nsfw = ctx.request.body.nsfw;
         }
+        input.metadata = ctx.request.body.metadata || false;
 
         ctx.response.body = await deviationsLogic.statistics(
           ctx.session.userId,
