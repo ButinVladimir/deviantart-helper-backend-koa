@@ -58,12 +58,11 @@ export default (db, schedulerWorker, config) => {
     const deviationsMetadataDao = new DeviationsMetadataDao(db);
 
     const authLogic = new AuthLogic(authApi, userApi, userDao, config);
-    const userLogic = new UserLogic(userApi, userDao);
+    const userLogic = new UserLogic(userApi, userDao, schedulerWorker, config);
     const deviationsLogic = new DeviationsLogic(
       userDao,
       deviationsDao,
       deviationsMetadataDao,
-      schedulerWorker,
       config,
     );
 

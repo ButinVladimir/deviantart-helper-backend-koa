@@ -1,6 +1,9 @@
+import { Worker } from 'worker_threads';
 import UserInfoOutput from '../output/user/info';
 import UserApi from '../api/user';
 import UserDao from '../dao/user';
+import Config from '../config/config';
+import FetchDataTaskModelFactory from '../models/task/factories/fetch-data-factory';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
@@ -13,10 +16,14 @@ export default class UserLogic {
    *
    * @param {UserApi} userApi - DeviantArt user API.
    * @param {UserDao} userDao - User DAO.
+   * @param {Worker} schedulerWorker - The task scheduler worker thread.
+   * @param {Config} config - Config.
    */
-  constructor(userApi, userDao) {
+  constructor(userApi, userDao, schedulerWorker, config) {
     this.userApi = userApi;
     this.userDao = userDao;
+    this.schedulerWorker = schedulerWorker;
+    this.config = config;
   }
 
   /**
@@ -30,5 +37,24 @@ export default class UserLogic {
     const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
     return UserInfoOutput.prepareOutput(userInfo);
+  }
+
+  /**
+   * @description
+   * Starts task to fetch data for user from DeviantArt API.
+   *
+   * @param {string} userId - The user ID.
+   * @returns {boolean} Was user able to request data fetching.
+   */
+  async startFetchDataTask(userId) {
+    if (!this.config.schedulerConfig.startBundled) {
+      return false;
+    }
+
+    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+
+    this.schedulerWorker.postMessage(FetchDataTaskModelFactory.createModel(userId));
+
+    return true;
   }
 }

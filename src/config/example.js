@@ -23,6 +23,7 @@ const config = new Config(
     80 * 24 * 60 * 60 * 1000, // DeviantArt OAuth refresh token window
   ),
   new SchedulerConfig(
+    true, // Should task scheduler start with the app server
     5, // Number of max attempts per task for task scheduler
     1000, // Minimal task scheduler delay
     600000, // Maximal task scheduler delay

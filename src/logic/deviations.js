@@ -1,17 +1,17 @@
-import { Worker } from 'worker_threads';
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
 import Config from '../config/config';
-import LoadDeviationsTaskModelFactory from '../models/task/factories/load-deviations-factory';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
 import DeviationsMetadataInput from '../input/deviations/metadata';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
+import DeviationsTotalInput from '../input/deviations/total';
 import DeviationsBrowseOutput from '../output/deviations/browse';
 import DeviationsDetailsOutput from '../output/deviations/details';
 import DeviationsMetadataOutput from '../output/deviations/metadata';
 import DeviationsStatisticsOutput from '../output/deviations/statistics';
+import DeviationsTotalOutput from '../output/deviations/total';
 import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
@@ -25,14 +25,12 @@ export default class DeviationsLogic {
    * @param {UserDao} userDao - User DAO.
    * @param {DeviationsDao} deviationsDao - Deviations DAO.
    * @param {DeviationsMetadataDao} deviationsMetadataDao - Deviations metadata DAO.
-   * @param {Worker} schedulerWorker - The task scheduler worker thread.
    * @param {Config} config - Config.
    */
-  constructor(userDao, deviationsDao, deviationsMetadataDao, schedulerWorker, config) {
+  constructor(userDao, deviationsDao, deviationsMetadataDao, config) {
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
-    this.schedulerWorker = schedulerWorker;
     this.config = config;
   }
 
@@ -149,13 +147,20 @@ export default class DeviationsLogic {
 
   /**
    * @description
-   * Starts task to fetch all deviations for user from DeviantArt API.
+   * Fetches deviations total statistics for user.
    *
    * @param {string} userId - The user ID.
+   * @param {DeviationsTotalInput} input - The input.
+   * @returns {Object} Deviations total statistics.
    */
-  async startLoadDeviationsTask(userId) {
+  async totalStatistics(userId, input) {
     await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
 
-    this.schedulerWorker.postMessage(LoadDeviationsTaskModelFactory.createModel(userId, 0));
+    const statistics = await this.deviationsDao.getTotalStatisticsByUser(
+      userId,
+      input,
+    );
+
+    return DeviationsTotalOutput.prepareOutput(statistics);
   }
 }

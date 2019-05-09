@@ -9,6 +9,7 @@ import * as taskNames from '../consts/task-names';
 import TaskModel from '../models/task/task';
 import BaseTask from './base';
 import RefreshAccessTokenTaskDecorator from './tasks/refresh-access-token-decorator';
+import FetchDataTask from './tasks/fetch-data';
 import LoadDeviationsTask from './tasks/load-deviations';
 import LoadDeviationsMetadataTask from './tasks/load-deviations-metadata';
 
@@ -86,6 +87,8 @@ export default class TaskFactory {
    */
   createTaskFromModelInternal(taskModel) {
     switch (taskModel.name) {
+      case taskNames.FETCH_DATA:
+        return this.createFetchDataTask(taskModel);
       case taskNames.LOAD_DEVIATIONS:
         return this.createLoadDeviationsTask(taskModel);
       case taskNames.LOAD_DEVIATIONS_METADATA:
@@ -94,6 +97,19 @@ export default class TaskFactory {
         return null;
     }
   }
+
+  /* eslint-disable class-methods-use-this */
+  /**
+   * @description
+   * Creates FetchDataTask instance from task model and injects dependencies.
+   *
+   * @param {TaskModel} taskModel - The TaskModel instance.
+   * @returns {FetchDataTask} FetchDataTask instance.
+   */
+  createFetchDataTask(taskModel) {
+    return new FetchDataTask(taskModel.params);
+  }
+  /* eslint-enable class-methods-use-this */
 
   /**
    * @description

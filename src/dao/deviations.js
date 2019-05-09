@@ -4,6 +4,7 @@ import DeviationModel from '../models/deviation/deviation';
 import DeviationModelConverter from '../models/deviation/converter';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
+import DeviationsTotalInput from '../input/deviations/total';
 
 /**
  * Deviations DAO class.
@@ -190,6 +191,47 @@ export default class DeviationsDao {
 
   /**
    * @description
+   * Fetches deviations total statistics by user ID and input.
+   *
+   * @param {string} userId - The user ID.
+   * @param {DeviationsTotalInput} input - The input.
+   * @returns {Promise<DeviationModel[]>} Count of deviations of user.
+   */
+  async getTotalStatisticsByUser(userId, input) {
+    const query = [
+      {
+        $match: DeviationsDao.prepareFetchQuery(userId, null),
+      },
+      ...DeviationsDao.prepareStatisticsBeginDataQuery(input),
+      ...DeviationsDao.prepareStatisticsEndDataQuery(input),
+      {
+        $project: {
+          views: { $subtract: ['$periodEndData.views', '$periodBeginData.views'] },
+          favourites: { $subtract: ['$periodEndData.favourites', '$periodBeginData.favourites'] },
+          comments: { $subtract: ['$periodEndData.comments', '$periodBeginData.comments'] },
+          downloads: { $subtract: ['$periodEndData.downloads', '$periodBeginData.downloads'] },
+        },
+      },
+      {
+        $group: {
+          _id: 1,
+          views: { $sum: '$views' },
+          favourites: { $sum: '$favourites' },
+          comments: { $sum: '$comments' },
+          downloads: { $sum: '$downloads' },
+        },
+      },
+    ];
+
+    const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS).aggregate(query).toArray();
+
+    return dbObjects.length > 0
+      ? DeviationModelConverter.fromDbObject(dbObjects[0])
+      : new DeviationModel();
+  }
+
+  /**
+   * @description
    * Prepares query to get deviations.
    *
    * @param {string} userId  - The user ID.
@@ -199,34 +241,36 @@ export default class DeviationsDao {
   static prepareFetchQuery(userId, input) {
     const query = { userId };
 
-    if (input.publishedTimeBegin || input.publishedTimeEnd) {
-      query.publishedTime = {};
-    }
+    if (input) {
+      if (input.publishedTimeBegin || input.publishedTimeEnd) {
+        query.publishedTime = {};
+      }
 
-    if (input.publishedTimeBegin) {
-      query.publishedTime.$gte = input.publishedTimeBegin;
-    }
+      if (input.publishedTimeBegin) {
+        query.publishedTime.$gte = input.publishedTimeBegin;
+      }
 
-    if (input.publishedTimeEnd) {
-      query.publishedTime.$lte = input.publishedTimeEnd;
-    }
+      if (input.publishedTimeEnd) {
+        query.publishedTime.$lte = input.publishedTimeEnd;
+      }
 
-    if (input.deviationIds) {
-      // eslint-disable-next-line no-underscore-dangle
-      query._id = {
-        $in: input.deviationIds,
-      };
-    }
+      if (input.deviationIds) {
+        // eslint-disable-next-line no-underscore-dangle
+        query._id = {
+          $in: input.deviationIds,
+        };
+      }
 
-    if (input.title) {
-      query.title = {
-        $regex: input.title,
-        $options: 'i',
-      };
-    }
+      if (input.title) {
+        query.title = {
+          $regex: input.title,
+          $options: 'i',
+        };
+      }
 
-    if (input.nsfw !== null) {
-      query.nsfw = input.nsfw;
+      if (input.nsfw !== null) {
+        query.nsfw = input.nsfw;
+      }
     }
 
     return query;

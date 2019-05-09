@@ -18,12 +18,14 @@ dbClient
 
     console.debug('Task scheduler is running');
 
-    parentPort.on('message', ({ name, params }) => {
-      console.debug(`Received task ${name}`);
+    if (config.schedulerConfig.startBundled) {
+      parentPort.on('message', ({ name, params }) => {
+        console.debug(`Received task ${name} from server`);
 
-      const taskModel = TaskModelBaseFactory.createModelRaw(name, params);
-      scheduler.addTasks([taskModel]);
-    });
+        const taskModel = TaskModelBaseFactory.createModelRaw(name, params);
+        scheduler.addTasks([taskModel]);
+      });
+    }
   }).catch((e) => {
     console.error(e);
   });

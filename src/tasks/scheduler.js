@@ -114,7 +114,12 @@ export default class TaskScheduler {
     await this.tasksDao.updateTask(this.currentTaskModel);
     await this.addTasks(this.nextTaskModels);
 
-    console.debug(`Set status of task ${this.currentTaskModel.id} to 'Finished' and added new tasks`);
+    console.debug(`Set status of task ${this.currentTaskModel.id} to 'Finished'`);
+    if (this.nextTaskModels.length > 0) {
+      console.debug('Added new tasks');
+    } else {
+      console.debug('No more tasks to add');
+    }
 
     this.currentTaskModel = null;
     this.attempt = 0;

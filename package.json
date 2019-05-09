@@ -5,10 +5,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run serve",
+    "start": "npm run serve:app",
     "build": "babel src -d build",
     "build:watch": "babel src -w -d build",
-    "serve": "nodemon build/index.js",
+    "serve:app": "nodemon build/index.js",
+    "serve:scheduler": "nodemon build/index-scheduler.js",
     "test": "jest",
     "test:staged": "jest --env=jsdom --findRelatedTests",
     "coverage": "jest --coverage --no-cache",

@@ -27,6 +27,21 @@ export default (userLogic, app) => {
       }
     });
 
+  // /user/load
+  router.get(routes.USER_LOAD,
+    refreshAuthGuard,
+    async (ctx) => {
+      try {
+        const status = await userLogic.startFetchDataTask(ctx.session.userId);
+
+        ctx.response.body = { status };
+      } catch (e) {
+        console.error(e.message);
+        console.error(e.stack);
+        ctx.throw(e.status || 500);
+      }
+    });
+
   router.prefix(routes.USER_PREFIX);
   app.use(router.middleware());
 };
