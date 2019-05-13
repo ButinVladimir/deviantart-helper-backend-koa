@@ -13,10 +13,7 @@ dbClient
   .then((client) => {
     const db = client.db(config.dbConfig.dbName);
 
-    let schedulerWorker = null;
-    if (config.schedulerConfig.startBundled) {
-      schedulerWorker = new Worker(join(__dirname, 'index-scheduler.js'));
-    }
+    const schedulerWorker = new Worker(join(__dirname, 'index-scheduler.js'));
 
     createApplication(db, schedulerWorker, config)
       .listen(config.serverConfig.port, () => {

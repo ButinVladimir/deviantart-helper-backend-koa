@@ -17,6 +17,8 @@ export default class UserInfoModel {
     this.userName = '';
     this.userIcon = '';
     this.userType = '';
+    this.latestFetchDate = null;
+    this.latestRequestDate = null;
   }
 
   /**

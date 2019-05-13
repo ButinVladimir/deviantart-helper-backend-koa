@@ -47,7 +47,7 @@ export default class UserLogic {
    * @returns {boolean} Was user able to request data fetching.
    */
   async startFetchDataTask(userId) {
-    if (!this.config.schedulerConfig.startBundled) {
+    if (this.config.schedulerConfig.readOnly) {
       return false;
     }
 

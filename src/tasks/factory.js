@@ -10,6 +10,7 @@ import TaskModel from '../models/task/task';
 import BaseTask from './base';
 import RefreshAccessTokenTaskDecorator from './tasks/refresh-access-token-decorator';
 import FetchDataTask from './tasks/fetch-data';
+import FetchDataAllUsersTask from './tasks/fetch-data-all-users';
 import LoadDeviationsTask from './tasks/load-deviations';
 import LoadDeviationsMetadataTask from './tasks/load-deviations-metadata';
 
@@ -63,6 +64,10 @@ export default class TaskFactory {
 
     const internalTask = this.createTaskFromModelInternal(taskModel);
 
+    if (taskModel.name === taskNames.FETCH_DATA_ALL_USERS) {
+      return internalTask;
+    }
+
     if (internalTask !== null) {
       return new RefreshAccessTokenTaskDecorator(
         taskModel.params,
@@ -87,6 +92,8 @@ export default class TaskFactory {
    */
   createTaskFromModelInternal(taskModel) {
     switch (taskModel.name) {
+      case taskNames.FETCH_DATA_ALL_USERS:
+        return this.createFetchDataAllUsersTask();
       case taskNames.FETCH_DATA:
         return this.createFetchDataTask(taskModel);
       case taskNames.LOAD_DEVIATIONS:
@@ -110,6 +117,16 @@ export default class TaskFactory {
     return new FetchDataTask(taskModel.params);
   }
   /* eslint-enable class-methods-use-this */
+
+  /**
+   * @description
+   * Creates FetchDataAllUsersTask instance from task model and injects dependencies.
+   *
+   * @returns {FetchDataAllUsersTask} FetchDataAllUsersTask instance.
+   */
+  createFetchDataAllUsersTask() {
+    return new FetchDataAllUsersTask(this.userDao);
+  }
 
   /**
    * @description

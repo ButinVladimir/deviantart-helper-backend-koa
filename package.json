@@ -10,6 +10,7 @@
     "build:watch": "babel src -w -d build",
     "serve:app": "nodemon build/index.js",
     "serve:scheduler": "nodemon build/index-scheduler.js",
+    "fetch": "node build/index-fetch.js",
     "test": "jest",
     "test:staged": "jest --env=jsdom --findRelatedTests",
     "coverage": "jest --coverage --no-cache",

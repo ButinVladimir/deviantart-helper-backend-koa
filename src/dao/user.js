@@ -55,4 +55,17 @@ export default class UserDao {
   async deleteById(userId) {
     await this.db.collection(COLLECTION_USERS).deleteOne({ _id: userId });
   }
+
+  /**
+   * @description
+   * Gets ids of users eligible to fetch and refresh their data.
+   *
+   * @returns {string[]} Users ids.
+   */
+  async getUserIdsForRefreshing() {
+    const users = await this.db.collection(COLLECTION_USERS).find({}).toArray();
+
+    // eslint-disable-next-line no-underscore-dangle
+    return users.map(u => u._id);
+  }
 }
