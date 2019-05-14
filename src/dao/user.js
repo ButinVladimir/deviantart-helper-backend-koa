@@ -63,7 +63,12 @@ export default class UserDao {
    * @returns {string[]} Users ids.
    */
   async getUserIdsForRefreshing() {
-    const users = await this.db.collection(COLLECTION_USERS).find({}).toArray();
+    const users = await this.db.collection(COLLECTION_USERS).find({
+      $or: [
+        { fetchDateThreshold: { $lte: Date.now() } },
+        { fetchDateThreshold: { $exists: false } },
+      ],
+    }).toArray();
 
     // eslint-disable-next-line no-underscore-dangle
     return users.map(u => u._id);

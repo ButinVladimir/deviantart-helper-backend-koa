@@ -27,7 +27,7 @@ export default class UserInfoModelConverter {
    * @returns {Object} DB object.
    */
   static toDbObject(userInfo) {
-    return {
+    const result = {
       accessToken: userInfo.accessToken,
       accessTokenExpires: userInfo.accessTokenExpires,
       refreshToken: userInfo.refreshToken,
@@ -36,6 +36,16 @@ export default class UserInfoModelConverter {
       userIcon: userInfo.userIcon,
       userType: userInfo.userType,
     };
+
+    if (userInfo.fetchDateThreshold !== null) {
+      result.fetchDateThreshold = userInfo.fetchDateThreshold;
+    }
+
+    if (userInfo.requestDateThreshold !== null) {
+      result.requestDateThreshold = userInfo.requestDateThreshold;
+    }
+
+    return result;
   }
 
   /**
@@ -57,6 +67,8 @@ export default class UserInfoModelConverter {
     userInfo.userName = dbObject.userName;
     userInfo.userIcon = dbObject.userIcon;
     userInfo.userType = dbObject.userType;
+    userInfo.fetchDateThreshold = dbObject.fetchDateThreshold || null;
+    userInfo.requestDateThreshold = dbObject.requestDateThreshold || null;
 
     return userInfo;
   }

@@ -14,6 +14,8 @@ export default class SchedulerConfig {
    * - Coefficient by which scheduler delay will be multiplied if task run has been successful.
    * @param {number} failureDelayCoefficient
    * - Coefficient by which scheduler delay will be multiplied if task run has failed.
+   * @param {number} fetchDataWindow - Window when user cannot fetch their data.
+   * @param {number} requestFetchDataWindow - Window when user cannot request fetching their data.
    */
   constructor(
     readOnly,
@@ -22,6 +24,8 @@ export default class SchedulerConfig {
     maxDelay,
     successDelayCoefficient,
     failureDelayCoefficient,
+    fetchDataWindow,
+    requestFetchDataWindow,
   ) {
     this.readOnly = readOnly;
     this.maxAttempts = maxAttempts;
@@ -29,5 +33,7 @@ export default class SchedulerConfig {
     this.maxDelay = maxDelay;
     this.successDelayCoefficient = successDelayCoefficient;
     this.failureDelayCoefficient = failureDelayCoefficient;
+    this.fetchDataWindow = fetchDataWindow;
+    this.requestFetchDataWindow = requestFetchDataWindow;
   }
 }

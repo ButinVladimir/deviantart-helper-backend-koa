@@ -4,7 +4,7 @@ import UserApi from '../api/user';
 import UserDao from '../dao/user';
 import Config from '../config/config';
 import FetchDataTaskModelFactory from '../models/task/factories/fetch-data-factory';
-import { fetchUserInfoAndCheckRefreshToken } from '../helper';
+import { fetchUserInfoAndCheckRefreshToken, checkThreshold } from '../helper';
 
 /**
  * Logic for user part.
@@ -51,7 +51,15 @@ export default class UserLogic {
       return false;
     }
 
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+
+    if (!checkThreshold(userInfo.fetchDateThreshold)
+      || !checkThreshold(userInfo.requestDateThreshold)) {
+      return false;
+    }
+
+    userInfo.requestDateThreshold = Date.now() + this.config.schedulerConfig.requestFetchDataWindow;
+    await this.userDao.update(userInfo);
 
     this.schedulerWorker.postMessage(FetchDataTaskModelFactory.createModel(userId));
 

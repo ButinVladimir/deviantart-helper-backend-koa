@@ -36,3 +36,12 @@ export const fetchUserInfoAndCheckRefreshToken = async (userId, userDao) => {
 
   throw new Error('User not found or refresh token expired.');
 };
+
+/**
+ * @description
+ * Checks if threshold is still valid.
+ *
+ * @param {number|null} threshold - The threshold timestamp.
+ * @returns {boolean} True, if threshold is not valid anymore.
+ */
+export const checkThreshold = threshold => threshold === null || threshold <= Date.now();

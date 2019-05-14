@@ -20,6 +20,7 @@ const config = new Config(
     'oauthKey', // DeviantArt OAuth key
     'oauthSecret', // DeviantArt OAuth secret
     'path/to/server/connect/deviantart/callback', // DeviantArt OAuth callback URI
+    50 * 60 * 1000, // DeviantArt OAuth access token window
     80 * 24 * 60 * 60 * 1000, // DeviantArt OAuth refresh token window
   ),
   new SchedulerConfig(
@@ -30,6 +31,8 @@ const config = new Config(
     0.75, // Coefficient by which scheduler delay will be multiplied
     // if task run has been successful
     4, // Coefficient by which scheduler delay will be multiplied if task run has failed
+    5 * 60 * 1000, // Window when user cannot fetch their data
+    10 * 60 * 1000, // Window when user cannot request fetching their data
   ),
   new ApiConfig(
     10, // Limit of deviations per page got from DeviantArt API, 1-24

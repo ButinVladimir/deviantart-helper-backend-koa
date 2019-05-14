@@ -17,8 +17,8 @@ export default class UserInfoModel {
     this.userName = '';
     this.userIcon = '';
     this.userType = '';
-    this.latestFetchDate = null;
-    this.latestRequestDate = null;
+    this.fetchDateThreshold = null;
+    this.requestDateThreshold = null;
   }
 
   /**
@@ -32,7 +32,7 @@ export default class UserInfoModel {
   addAuthData(grantResponse, config) {
     this.accessToken = grantResponse.access_token;
     this.refreshToken = grantResponse.refresh_token;
-    this.accessTokenExpires = Date.now() + grantResponse.raw.expires_in * 1000;
+    this.accessTokenExpires = Date.now() + config.oauthConfig.accessTokenWindow;
     this.refreshTokenExpires = Date.now() + config.oauthConfig.refreshTokenWindow;
 
     return this;
@@ -50,23 +50,6 @@ export default class UserInfoModel {
     this.userName = whoAmIData.username;
     this.userIcon = whoAmIData.usericon;
     this.userType = whoAmIData.type;
-
-    return this;
-  }
-
-  /**
-   * @description
-   * Adds refreshment data.
-   *
-   * @param {Object} refreshmentData - Data from DeviantArt API.
-   * @param {Config} config - The config.
-   * @returns {UserInfoModel} Self.
-   */
-  addRefreshmentData(refreshmentData, config) {
-    this.accessToken = refreshmentData.access_token;
-    this.refreshToken = refreshmentData.refresh_token;
-    this.accessTokenExpires = Date.now() + refreshmentData.expires_in * 1000;
-    this.refreshTokenExpires = Date.now() + config.oauthConfig.refreshTokenWindow;
 
     return this;
   }

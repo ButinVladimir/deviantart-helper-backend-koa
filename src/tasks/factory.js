@@ -114,7 +114,7 @@ export default class TaskFactory {
    * @returns {FetchDataTask} FetchDataTask instance.
    */
   createFetchDataTask(taskModel) {
-    return new FetchDataTask(taskModel.params);
+    return new FetchDataTask(taskModel.params, this.userDao, this.config);
   }
   /* eslint-enable class-methods-use-this */
 

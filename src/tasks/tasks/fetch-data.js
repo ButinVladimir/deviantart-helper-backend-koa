@@ -1,6 +1,9 @@
 import BaseTask from '../base';
+import UserDao from '../../dao/user';
+import Config from '../../config/config';
 import LoadDeviationsTaskModelFactory from '../../models/task/factories/load-deviations-factory';
 import TaskModel from '../../models/task/task';
+import { fetchUserInfoAndCheckAccessToken, checkThreshold } from '../../helper';
 
 /**
  * Task to start fetching data for single user.
@@ -11,11 +14,16 @@ export default class FetchDataTask extends BaseTask {
    * The constructor.
    *
    * @param {Object} params - Task parameters.
+   * @param {UserDao} userDao - The user DAO.
+   * @param {Config} config - The config.
    */
-  constructor(params) {
+  constructor(params, userDao, config) {
     super();
 
     this.setParams(params);
+
+    this.userDao = userDao;
+    this.config = config;
   }
 
   /**
@@ -37,6 +45,17 @@ export default class FetchDataTask extends BaseTask {
    * @returns {Promise<TaskModel[]>} Batch of next tasks.
    */
   async run() {
+    const userInfo = await fetchUserInfoAndCheckAccessToken(this.userId, this.userDao);
+    if (!checkThreshold(userInfo.fetchDateThreshold)) {
+      console.debug(`Data for user ${userInfo.userName} cannot be fetched, too soon`);
+
+      return [];
+    }
+
+    console.debug(`Data for user ${userInfo.userName} can be fetched`);
+    userInfo.fetchDateThreshold = Date.now() + this.config.schedulerConfig.fetchDataWindow;
+    await this.userDao.update(userInfo);
+
     return [
       LoadDeviationsTaskModelFactory.createModel(this.userId, 0),
     ];
