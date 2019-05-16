@@ -35,8 +35,8 @@ export default class AuthLogic {
    */
   async authCallback(grantResponse) {
     const userInfo = new UserInfoModel();
-    userInfo.addAuthData(grantResponse, this.config);
-    userInfo.addWhoAmIData(await this.userApi.whoAmI(userInfo.accessToken));
+    await userInfo.addAuthData(grantResponse, this.config);
+    userInfo.addWhoAmIData(await this.userApi.whoAmI(userInfo));
 
     await this.userDao.update(userInfo);
 
@@ -52,7 +52,7 @@ export default class AuthLogic {
    */
   async revoke(userId) {
     const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-    const result = await this.authApi.revoke(userInfo.refreshToken);
+    const result = await this.authApi.revoke(userInfo);
 
     if (result) {
       await this.userDao.update(userInfo.revoke());

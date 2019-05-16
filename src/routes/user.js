@@ -18,28 +18,16 @@ export default (userLogic, app) => {
   router.get(routes.USER_INFO,
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        ctx.response.body = await userLogic.getInfo(ctx.session.userId);
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
+      ctx.response.body = await userLogic.getInfo(ctx.session.userId);
     });
 
   // /user/load
   router.get(routes.USER_LOAD,
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const status = await userLogic.startFetchDataTask(ctx.session.userId);
+      const status = await userLogic.startFetchDataTask(ctx.session.userId);
 
-        ctx.response.body = { status };
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
+      ctx.response.body = { status };
     });
 
   router.prefix(routes.USER_PREFIX);

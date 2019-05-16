@@ -2,7 +2,7 @@ import BaseTask from '../base';
 import AuthApi from '../../api/auth';
 import UserDao from '../../dao/user';
 import Config from '../../config/config';
-import { fetchUserInfoAndCheckRefreshToken } from '../../helper';
+import { fetchUserInfoAndCheckRefreshToken, output, mark } from '../../helper';
 import TaskModel from '../../models/task/task';
 
 /**
@@ -51,19 +51,21 @@ export default class RefreshAccessTokenDecoratorTask extends BaseTask {
   async run() {
     const userInfo = await fetchUserInfoAndCheckRefreshToken(this.userId, this.userDao);
 
-    if (Date.now() >= userInfo.accessTokenExpires) {
-      console.debug(`User ${userInfo.userName} requires token refreshing`);
+    if (Date.now() >= userInfo.accessToken.expires) {
+      output(`User ${mark(userInfo.userName)} requires token refreshing`);
 
-      userInfo.addAuthData(
+      await userInfo.addAuthData(
         await this.authApi.refresh(
           this.config.oauthConfig.key,
           this.config.oauthConfig.secret,
-          userInfo.refreshToken,
+          userInfo,
         ),
         this.config,
       );
 
       await this.userDao.update(userInfo);
+
+      output(`User ${mark(userInfo.userName)} data was refreshed`);
     }
 
     return this.task.run();

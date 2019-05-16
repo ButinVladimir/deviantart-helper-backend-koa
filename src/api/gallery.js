@@ -1,8 +1,8 @@
 import axios from 'axios';
 import querystring from 'querystring';
 import * as api from '../consts/api';
-
-/* eslint-disable class-methods-use-this */
+import Config from '../config/config';
+import UserInfoModel from '../models/user-info/user-info';
 
 /**
  * Wrapper for DeviantART gallery api.
@@ -10,20 +10,31 @@ import * as api from '../consts/api';
 export default class GalleryApi {
   /**
    * @description
+   * The constructor.
+   *
+   * @param {Config} config - The config.
+   */
+  constructor(config) {
+    this.config = config;
+  }
+
+  /**
+   * @description
    * Fetches all deviations from current user.
    *
-   * @param {string} accessToken - The access token.
+   * @param {UserInfoModel} userInfo - The user info.
    * @param {number} offset - Current offset.
    * @param {number} limit - Limit of deviations per page.
    * @returns {Object} Response from API.
    */
-  async getAll(accessToken, offset, limit) {
+  async getAll(userInfo, offset, limit) {
     const params = {
       offset,
       limit,
       mature_content: true,
     };
 
+    const accessToken = await userInfo.accessToken.decrypt(this.config);
     const response = await axios.get(
       `${api.GALLERY_ALL}?${querystring.stringify(params)}`,
       {
@@ -36,5 +47,3 @@ export default class GalleryApi {
     return response.data;
   }
 }
-
-/* eslint-enable class-methods-use-this */

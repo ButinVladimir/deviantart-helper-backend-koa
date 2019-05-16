@@ -1,8 +1,8 @@
 import axios from 'axios';
 import querystring from 'querystring';
 import * as api from '../consts/api';
-
-/* eslint-disable class-methods-use-this */
+import Config from '../config/config';
+import UserInfoModel from '../models/user-info/user-info';
 
 /**
  * Wrapper for DeviantART auth api.
@@ -10,12 +10,23 @@ import * as api from '../consts/api';
 export default class AuthApi {
   /**
    * @description
+   * The constructor.
+   *
+   * @param {Config} config - The config.
+   */
+  constructor(config) {
+    this.config = config;
+  }
+
+  /**
+   * @description
    * Revokes user session.
    *
-   * @param {string} refreshToken - The refresh token.
+   * @param {UserInfoModel} userInfo - The user info.
    * @returns {boolean} Success of operation.
    */
-  async revoke(refreshToken) {
+  async revoke(userInfo) {
+    const refreshToken = await userInfo.refreshToken.decrypt(this.config);
     const params = { token: refreshToken };
     const response = await axios.post(api.AUTH_REVOKE, querystring.stringify(params));
 
@@ -28,10 +39,11 @@ export default class AuthApi {
    *
    * @param {string} clientId - The client app id.
    * @param {string} clientSecret - The client app secret.
-   * @param {string} refreshToken - The refresh token.
+   * @param {UserInfoModel} userInfo - The user info.
    * @returns {Object} Object with refreshment info.
    */
-  async refresh(clientId, clientSecret, refreshToken) {
+  async refresh(clientId, clientSecret, userInfo) {
+    const refreshToken = await userInfo.refreshToken.decrypt(this.config);
     const params = {
       client_id: clientId,
       client_secret: clientSecret,
@@ -43,5 +55,3 @@ export default class AuthApi {
     return response.data;
   }
 }
-
-/* eslint-enable class-methods-use-this */

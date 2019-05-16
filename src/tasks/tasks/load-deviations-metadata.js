@@ -6,7 +6,7 @@ import DeviationsMetadataDao from '../../dao/deviations-metadata';
 import DeviationModelConverter from '../../models/deviation/converter';
 import DeviationMetadataModelConverter from '../../models/deviation-metadata/converter';
 import Config from '../../config/config';
-import { fetchUserInfoAndCheckAccessToken } from '../../helper';
+import { fetchUserInfoAndCheckAccessToken, output, mark } from '../../helper';
 import TaskModel from '../../models/task/task';
 
 /**
@@ -59,7 +59,7 @@ export default class LoadDeviationsMetadataTask extends BaseTask {
     const userInfo = await fetchUserInfoAndCheckAccessToken(this.userId, this.userDao);
 
     const data = await this.deviationApi.getDeviationsMetadata(
-      userInfo.accessToken,
+      userInfo,
       this.deviationIds,
     );
 
@@ -69,7 +69,7 @@ export default class LoadDeviationsMetadataTask extends BaseTask {
           .fromApiObject(dm)
           .setUserId(this.userId));
 
-      console.debug('Got deviations metadata for', userInfo.userName);
+      output(`Got deviations metadata for ${mark(userInfo.userName)}`);
 
       await this.deviationsMetadataDao.batchInsert(deviationsMetadata);
       await this.deviationsDao.batchUpdateMetadata(deviationsMetadata

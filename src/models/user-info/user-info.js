@@ -1,4 +1,5 @@
 import Config from '../../config/config';
+import UserInfoTokenModel from './token';
 
 /**
  * User info model object.
@@ -9,10 +10,8 @@ export default class UserInfoModel {
    * The constructor.
    */
   constructor() {
-    this.accessToken = '';
-    this.refreshToken = '';
-    this.accessTokenExpires = 0;
-    this.refreshTokenExpires = 0;
+    this.accessToken = null;
+    this.refreshToken = null;
     this.userId = '';
     this.userName = '';
     this.userIcon = '';
@@ -29,11 +28,20 @@ export default class UserInfoModel {
    * @param {Config} config - The config.
    * @returns {UserInfoModel} Self.
    */
-  addAuthData(grantResponse, config) {
-    this.accessToken = grantResponse.access_token;
-    this.refreshToken = grantResponse.refresh_token;
-    this.accessTokenExpires = Date.now() + config.oauthConfig.accessTokenWindow;
-    this.refreshTokenExpires = Date.now() + config.oauthConfig.refreshTokenWindow;
+  async addAuthData(grantResponse, config) {
+    this.accessToken = new UserInfoTokenModel();
+    await this.accessToken.encrypt(
+      grantResponse.access_token,
+      Date.now() + config.oauthConfig.accessTokenWindow,
+      config,
+    );
+
+    this.refreshToken = new UserInfoTokenModel();
+    await this.refreshToken.encrypt(
+      grantResponse.refresh_token,
+      Date.now() + config.oauthConfig.refreshTokenWindow,
+      config,
+    );
 
     return this;
   }
@@ -61,9 +69,7 @@ export default class UserInfoModel {
    */
   revoke() {
     this.accessToken = null;
-    this.accessTokenExpires = null;
     this.refreshToken = null;
-    this.refreshTokenExpires = null;
 
     return this;
   }

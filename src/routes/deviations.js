@@ -65,28 +65,22 @@ export default (deviationsLogic, app) => {
     },
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const input = new DeviationsBrowseInput();
-        input.deviationIds = ctx.request.body.ids || null;
-        input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
-        input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
-        input.title = ctx.request.body.title || null;
-        input.sortField = ctx.request.body.sortfield;
-        input.sortOrder = ctx.request.body.sortorder;
-        if (ctx.request.body.nsfw !== null) {
-          input.nsfw = ctx.request.body.nsfw;
-        }
-
-        ctx.response.body = await deviationsLogic.browse(
-          ctx.session.userId,
-          input,
-          ctx.params.page,
-        );
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
+      const input = new DeviationsBrowseInput();
+      input.deviationIds = ctx.request.body.ids || null;
+      input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
+      input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
+      input.title = ctx.request.body.title || null;
+      input.sortField = ctx.request.body.sortfield;
+      input.sortOrder = ctx.request.body.sortorder;
+      if (ctx.request.body.nsfw !== null) {
+        input.nsfw = ctx.request.body.nsfw;
       }
+
+      ctx.response.body = await deviationsLogic.browse(
+        ctx.session.userId,
+        input,
+        ctx.params.page,
+      );
     });
 
   // /deviations/details/:id
@@ -115,28 +109,22 @@ export default (deviationsLogic, app) => {
     },
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const input = new DeviationsDetailsInput();
-        input.timestampBegin = ctx.query.timestampbegin || null;
-        input.timestampEnd = ctx.query.timestampend || null;
-        input.metadata = ctx.query.metadata || false;
+      const input = new DeviationsDetailsInput();
+      input.timestampBegin = ctx.query.timestampbegin || null;
+      input.timestampEnd = ctx.query.timestampend || null;
+      input.metadata = ctx.query.metadata || false;
 
-        const output = await deviationsLogic.details(
-          ctx.session.userId,
-          ctx.params.id,
-          input,
-        );
+      const output = await deviationsLogic.details(
+        ctx.session.userId,
+        ctx.params.id,
+        input,
+      );
 
-        if (output === null) {
-          ctx.throw(404);
-        }
-
-        ctx.response.body = output;
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
+      if (output === null) {
+        ctx.throw(404);
       }
+
+      ctx.response.body = output;
     });
 
   // /deviations/metadata
@@ -161,23 +149,17 @@ export default (deviationsLogic, app) => {
     },
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const input = new DeviationsMetadataInput();
-        input.deviationIds = ctx.request.body.ids || [];
-        input.timestampBegin = ctx.request.body.timestampbegin || null;
-        input.timestampEnd = ctx.request.body.timestampend || null;
+      const input = new DeviationsMetadataInput();
+      input.deviationIds = ctx.request.body.ids || [];
+      input.timestampBegin = ctx.request.body.timestampbegin || null;
+      input.timestampEnd = ctx.request.body.timestampend || null;
 
-        const output = await deviationsLogic.metadata(
-          ctx.session.userId,
-          input,
-        );
+      const output = await deviationsLogic.metadata(
+        ctx.session.userId,
+        input,
+      );
 
-        ctx.response.body = output;
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
+      ctx.response.body = output;
     });
 
   // /deviations/statistics/:page
@@ -236,31 +218,25 @@ export default (deviationsLogic, app) => {
     },
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const input = new DeviationsStatisticsInput();
-        input.deviationIds = ctx.request.body.ids || null;
-        input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
-        input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
-        input.title = ctx.request.body.title || null;
-        input.sortField = ctx.request.body.sortfield;
-        input.sortOrder = ctx.request.body.sortorder;
-        input.timestampBegin = ctx.request.body.timestampbegin;
-        input.timestampEnd = ctx.request.body.timestampend;
-        if (ctx.request.body.nsfw !== null) {
-          input.nsfw = ctx.request.body.nsfw;
-        }
-        input.metadata = ctx.request.body.metadata || false;
-
-        ctx.response.body = await deviationsLogic.statistics(
-          ctx.session.userId,
-          input,
-          ctx.params.page,
-        );
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
+      const input = new DeviationsStatisticsInput();
+      input.deviationIds = ctx.request.body.ids || null;
+      input.publishedTimeBegin = ctx.request.body.publishedtimebegin || null;
+      input.publishedTimeEnd = ctx.request.body.publishedtimeend || null;
+      input.title = ctx.request.body.title || null;
+      input.sortField = ctx.request.body.sortfield;
+      input.sortOrder = ctx.request.body.sortorder;
+      input.timestampBegin = ctx.request.body.timestampbegin;
+      input.timestampEnd = ctx.request.body.timestampend;
+      if (ctx.request.body.nsfw !== null) {
+        input.nsfw = ctx.request.body.nsfw;
       }
+      input.metadata = ctx.request.body.metadata || false;
+
+      ctx.response.body = await deviationsLogic.statistics(
+        ctx.session.userId,
+        input,
+        ctx.params.page,
+      );
     });
 
   // /deviations/total
@@ -281,22 +257,16 @@ export default (deviationsLogic, app) => {
     },
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const input = new DeviationsTotalInput();
-        input.timestampBegin = ctx.query.timestampbegin || null;
-        input.timestampEnd = ctx.query.timestampend || null;
+      const input = new DeviationsTotalInput();
+      input.timestampBegin = ctx.query.timestampbegin || null;
+      input.timestampEnd = ctx.query.timestampend || null;
 
-        const output = await deviationsLogic.totalStatistics(
-          ctx.session.userId,
-          input,
-        );
+      const output = await deviationsLogic.totalStatistics(
+        ctx.session.userId,
+        input,
+      );
 
-        ctx.response.body = output;
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
+      ctx.response.body = output;
     });
 
   router.prefix(routes.DEVIATIONS_PREFIX);

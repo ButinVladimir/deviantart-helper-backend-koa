@@ -3,6 +3,7 @@ import TaskFactory from './factory';
 import TaskModel from '../models/task/task';
 import Config from '../config/config';
 import * as taskResults from '../consts/task-result';
+import { output, outputError, mark } from '../helper';
 
 /**
  * Task scheduler.
@@ -50,8 +51,8 @@ export default class TaskScheduler {
         await this.handleCurrentTask();
       }
     } catch (e) {
-      console.error(e.message);
-      console.error(e.stack);
+      output(e.message);
+      output(e.stack);
     }
 
     setTimeout(this.tick, this.delay);
@@ -86,7 +87,7 @@ export default class TaskScheduler {
    * and updating delay before next task can be runned.
    */
   async handleCurrentTask() {
-    console.debug(`Got task ${this.currentTaskModel.name} with id ${this.currentTaskModel.id} to run`);
+    output(`Got task ${mark(this.currentTaskModel.name)} with id ${mark(this.currentTaskModel.id)} to run`);
 
     this.currentTaskModel.setStartedState();
     await this.tasksDao.updateTask(this.currentTaskModel);
@@ -99,7 +100,7 @@ export default class TaskScheduler {
       await this.handleCurrentTaskFailure(taskResult);
     }
 
-    console.debug(`Next delay will be ${this.delay}`);
+    output(`Next delay will be ${mark(this.delay)}`);
     console.debug();
   }
 
@@ -108,17 +109,17 @@ export default class TaskScheduler {
    * Handles task when the result is successful.
    */
   async handleCurrentTaskSuccess() {
-    console.debug(`Finished running task ${this.currentTaskModel.id}`);
+    output(`Finished running task ${mark(this.currentTaskModel.id)}`);
 
     this.currentTaskModel.setFinishedState();
     await this.tasksDao.updateTask(this.currentTaskModel);
     await this.addTasks(this.nextTaskModels);
 
-    console.debug(`Set status of task ${this.currentTaskModel.id} to 'Finished'`);
+    output(`Set status of task ${mark(this.currentTaskModel.id)} to ${mark('Finished')}`);
     if (this.nextTaskModels.length > 0) {
-      console.debug('Added new tasks');
+      output('Added new tasks');
     } else {
-      console.debug('No more tasks to add');
+      output('No more tasks to add');
     }
 
     this.currentTaskModel = null;
@@ -136,14 +137,14 @@ export default class TaskScheduler {
    * @param {number} taskResult - Task result.
    */
   async handleCurrentTaskFailure(taskResult) {
-    console.debug(`Failed running task ${this.currentTaskModel.id}`);
+    output(`Failed running task ${mark(this.currentTaskModel.id)}`);
 
     if (taskResult === taskResults.FAILURE
       || this.attempt >= this.config.schedulerConfig.maxAttempts) {
       this.currentTaskModel.setFailedState();
       await this.tasksDao.updateTask(this.currentTaskModel);
 
-      console.debug(`Set status of task ${this.currentTaskModel.id} to 'Failed'`);
+      output(`Set status of task ${mark(this.currentTaskModel.id)} to ${mark('Failed')}`);
 
       this.currentTaskModel = null;
       this.attempt = 0;
@@ -167,14 +168,14 @@ export default class TaskScheduler {
     /* eslint-disable no-await-in-loop */
     try {
       this.attempt += 1;
-      console.debug(`Attempt ${this.attempt}`);
+      output(`Attempt ${mark(this.attempt)}`);
 
       this.nextTaskModels = await this.taskFactory.createTaskFromModel(this.currentTaskModel).run();
 
       return taskResults.SUCCESS;
     } catch (e) {
-      console.error(e.message);
-      console.error(e.stack);
+      outputError(e.message);
+      outputError(e.stack);
 
       if (e.response && e.response.status === 429) {
         return taskResults.TOO_MANY_REQUESTS;

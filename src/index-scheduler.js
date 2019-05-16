@@ -3,6 +3,7 @@ import { parentPort } from 'worker_threads';
 import config from './config';
 import createScheduler from './create-scheduler';
 import TaskModelBaseFactory from './models/task/base-factory';
+import { output, outputError } from './helper';
 
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
@@ -16,14 +17,14 @@ dbClient
     const scheduler = createScheduler(db, config);
     scheduler.start();
 
-    console.debug('Task scheduler is running');
+    output('Task scheduler is running');
 
     parentPort.on('message', ({ name, params }) => {
-      console.debug(`Received task ${name} from server`);
+      output(`Received task ${name} from server`);
 
       const taskModel = TaskModelBaseFactory.createModelRaw(name, params);
       scheduler.addTasks([taskModel]);
     });
   }).catch((e) => {
-    console.error(e);
+    outputError(e);
   });

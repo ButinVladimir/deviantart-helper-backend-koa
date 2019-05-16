@@ -2,6 +2,7 @@ import { MongoClient } from 'mongodb';
 import config from './config';
 import FetchDataAllUsersTaskModelFactory from './models/task/factories/fetch-data-all-users-factory';
 import TasksDao from './dao/tasks';
+import { output, outputError } from './helper';
 
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
@@ -15,9 +16,9 @@ dbClient
 
     await tasksDao.batchInsert([FetchDataAllUsersTaskModelFactory.createModel()]);
 
-    console.log('Added tasks to fetch data successfully');
+    output('Added tasks to fetch data successfully');
 
     process.exit();
   }).catch((e) => {
-    console.error(e);
+    outputError(e);
   });

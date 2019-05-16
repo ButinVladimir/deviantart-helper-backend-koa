@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as api from '../consts/api';
-
-/* eslint-disable class-methods-use-this */
+import Config from '../config/config';
+import UserInfoModel from '../models/user-info/user-info';
 
 /**
  * Wrapper for DeviantART user api.
@@ -9,12 +9,23 @@ import * as api from '../consts/api';
 export default class UserApi {
   /**
    * @description
+   * The constructor.
+   *
+   * @param {Config} config - The config.
+   */
+  constructor(config) {
+    this.config = config;
+  }
+
+  /**
+   * @description
    * Returns user information.
    *
-   * @param {string} accessToken - The access token.
+   * @param {UserInfoModel} userInfo - The user info.
    * @returns {Object} Response.
    */
-  async whoAmI(accessToken) {
+  async whoAmI(userInfo) {
+    const accessToken = await userInfo.accessToken.decrypt(this.config);
     const response = await axios.get(api.USER_WHOAMI, {
       headers: {
         authorization: `Bearer ${accessToken}`,
@@ -24,5 +35,3 @@ export default class UserApi {
     return response.data;
   }
 }
-
-/* eslint-enable class-methods-use-this */

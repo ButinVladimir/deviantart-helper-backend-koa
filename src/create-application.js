@@ -18,10 +18,13 @@ import AuthLogic from './logic/auth';
 import UserLogic from './logic/user';
 import DeviationsLogic from './logic/deviations';
 
+import errorHandler from './routes/error-handler';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
 import deviationsRoutes from './routes/deviations';
 import devSessionMiddleware from './dev-session';
+
+import { outputError } from './helper';
 
 /**
  * @description
@@ -50,8 +53,10 @@ export default (db, schedulerWorker, config) => {
       devSessionMiddleware(app);
     }
 
-    const authApi = new AuthApi();
-    const userApi = new UserApi();
+    app.use(errorHandler);
+
+    const authApi = new AuthApi(config);
+    const userApi = new UserApi(config);
 
     const userDao = new UserDao(db);
     const deviationsDao = new DeviationsDao(db);
@@ -72,7 +77,7 @@ export default (db, schedulerWorker, config) => {
 
     return app;
   } catch (error) {
-    console.error(error);
+    outputError(error);
 
     throw error;
   }

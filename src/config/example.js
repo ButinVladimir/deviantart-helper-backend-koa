@@ -19,6 +19,7 @@ const config = new Config(
   new OAuthConfig(
     'oauthKey', // DeviantArt OAuth key
     'oauthSecret', // DeviantArt OAuth secret
+    'tokenKey', // Token encryption key
     'path/to/server/connect/deviantart/callback', // DeviantArt OAuth callback URI
     50 * 60 * 1000, // DeviantArt OAuth access token window
     80 * 24 * 60 * 60 * 1000, // DeviantArt OAuth refresh token window

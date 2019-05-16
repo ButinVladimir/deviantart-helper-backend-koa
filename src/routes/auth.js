@@ -34,22 +34,16 @@ export default (authLogic, config, app) => {
 
   // /auth/callback
   router.get(routes.AUTH_CALLBACK, async (ctx) => {
-    try {
-      if (ctx.session.grant) {
-        const session = await authLogic.authCallback(ctx.session.grant.response);
-        Object.assign(ctx.session, session);
-        ctx.session.isLoggedIn = true;
+    if (ctx.session.grant) {
+      const session = await authLogic.authCallback(ctx.session.grant.response);
+      Object.assign(ctx.session, session);
+      ctx.session.isLoggedIn = true;
 
-        delete ctx.session.grant;
+      delete ctx.session.grant;
 
-        ctx.response.body = 'Granted';
-      } else {
-        ctx.response.body = 'Callback data is missing';
-      }
-    } catch (e) {
-      console.error(e.message);
-      console.error(e.stack);
-      ctx.throw(e.status || 500);
+      ctx.response.body = 'Granted';
+    } else {
+      ctx.response.body = 'Callback data is missing';
     }
   });
 
@@ -57,16 +51,10 @@ export default (authLogic, config, app) => {
   router.get(routes.AUTH_REVOKE,
     refreshAuthGuard,
     async (ctx) => {
-      try {
-        const revokeResult = await authLogic.revoke(ctx.session.userId);
+      const revokeResult = await authLogic.revoke(ctx.session.userId);
 
-        ctx.response.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
-        ctx.session = null;
-      } catch (e) {
-        console.error(e.message);
-        console.error(e.stack);
-        ctx.throw(e.status || 500);
-      }
+      ctx.response.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
+      ctx.session = null;
     });
 
   router.prefix(routes.AUTH_PREFIX);

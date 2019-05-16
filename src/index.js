@@ -3,6 +3,7 @@ import { join } from 'path';
 import { MongoClient } from 'mongodb';
 import config from './config';
 import createApplication from './create-application';
+import { output, outputError } from './helper';
 
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
@@ -17,8 +18,8 @@ dbClient
 
     createApplication(db, schedulerWorker, config)
       .listen(config.serverConfig.port, () => {
-        console.debug('Server is running');
+        output('Server is running');
       });
   }).catch((e) => {
-    console.error(e);
+    outputError(e);
   });

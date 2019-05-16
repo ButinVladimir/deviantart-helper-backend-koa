@@ -17,8 +17,8 @@ export default class UserInfoOutput {
       userName: userInfo.userName,
       userIcon: userInfo.userIcon,
       userType: userInfo.userType,
-      accessTokenExpires: userInfo.accessTokenExpires,
-      refreshTokenExpires: userInfo.refreshTokenExpires,
+      accessTokenExpires: userInfo.accessToken !== null ? userInfo.accessToken.expires : null,
+      refreshTokenExpires: userInfo.refreshToken !== null ? userInfo.refreshToken.expires : null,
       fetchDateThreshold: userInfo.fetchDateThreshold,
       requestDateThreshold: userInfo.requestDateThreshold,
     };

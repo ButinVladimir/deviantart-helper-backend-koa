@@ -22,9 +22,9 @@ import TaskScheduler from './tasks/scheduler';
  * @returns {TaskScheduler} Application.
  */
 export default (db, config) => {
-  const authApi = new AuthApi();
-  const galleryApi = new GalleryApi();
-  const deviationApi = new DeviationApi();
+  const authApi = new AuthApi(config);
+  const galleryApi = new GalleryApi(config);
+  const deviationApi = new DeviationApi(config);
 
   const userDao = new UserDao(db);
   const deviationsDao = new DeviationsDao(db);

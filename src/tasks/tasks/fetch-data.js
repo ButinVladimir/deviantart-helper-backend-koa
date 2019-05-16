@@ -3,7 +3,12 @@ import UserDao from '../../dao/user';
 import Config from '../../config/config';
 import LoadDeviationsTaskModelFactory from '../../models/task/factories/load-deviations-factory';
 import TaskModel from '../../models/task/task';
-import { fetchUserInfoAndCheckAccessToken, checkThreshold } from '../../helper';
+import {
+  fetchUserInfoAndCheckAccessToken,
+  checkThreshold,
+  output,
+  mark,
+} from '../../helper';
 
 /**
  * Task to start fetching data for single user.
@@ -47,12 +52,12 @@ export default class FetchDataTask extends BaseTask {
   async run() {
     const userInfo = await fetchUserInfoAndCheckAccessToken(this.userId, this.userDao);
     if (!checkThreshold(userInfo.fetchDateThreshold)) {
-      console.debug(`Data for user ${userInfo.userName} cannot be fetched, too soon`);
+      output(`Data for user ${mark(userInfo.userName)} cannot be fetched, too soon`);
 
       return [];
     }
 
-    console.debug(`Data for user ${userInfo.userName} can be fetched`);
+    output(`Data for user ${mark(userInfo.userName)} can be fetched`);
     userInfo.fetchDateThreshold = Date.now() + this.config.schedulerConfig.fetchDataWindow;
     await this.userDao.update(userInfo);
 
