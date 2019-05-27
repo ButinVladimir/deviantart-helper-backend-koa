@@ -3,7 +3,7 @@ import GalleryApi from '../../api/gallery';
 import UserDao from '../../dao/user';
 import DeviationsDao from '../../dao/deviations';
 import Config from '../../config/config';
-import DeviationConverter from '../../models/deviation/converter';
+import DeviationModelConverter from '../../models/deviation/converter';
 import LoadDeviationsTaskModelFactory from '../../models/task/factories/load-deviations-factory';
 import LoadDeviationsMetadataTaskModelFactory from '../../models/task/factories/load-deviations-metadata-factory';
 import { fetchUserInfoAndCheckAccessToken, output, mark } from '../../helper';
@@ -67,7 +67,7 @@ export default class LoadDeviationsTask extends BaseTask {
     output(`Has more ${mark(result.has_more)}`);
     output(`Next offset ${mark(result.next_offset)}`);
 
-    const deviations = result.results.map(d => DeviationConverter.fromApiObject(d));
+    const deviations = result.results.map(d => DeviationModelConverter.fromApiObject(d));
     await this.deviationsDao.batchUpdate(deviations);
     const deviationIds = deviations.map(d => d.id);
 

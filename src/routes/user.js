@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-joi-router';
-import refreshAuthGuard from './refresh-auth-guard';
+import authGuard from './auth-guard';
 import * as routes from '../consts/routes';
 import UserLogic from '../logic/user';
 
@@ -16,14 +16,14 @@ export default (userLogic, app) => {
 
   // /user/info
   router.get(routes.USER_INFO,
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       ctx.response.body = await userLogic.getInfo(ctx.session.userId);
     });
 
   // /user/load
   router.get(routes.USER_LOAD,
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const status = await userLogic.startFetchDataTask(ctx.session.userId);
 

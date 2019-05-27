@@ -2,7 +2,7 @@ import Koa from 'koa';
 import mount from 'koa-mount';
 import grant from 'grant-koa';
 import Router from 'koa-joi-router';
-import refreshAuthGuard from './refresh-auth-guard';
+import authGuard from './auth-guard';
 import * as routes from '../consts/routes';
 import Config from '../config/config';
 import AuthLogic from '../logic/auth';
@@ -20,7 +20,7 @@ export default (authLogic, config, app) => {
 
   app.use(mount(routes.AUTH_PREFIX, grant({
     defaults: {
-      redirect_uri: config.oauthConfig.redirectUri,
+      redirect_uri: config.oauthConfig.callbackUri,
       transport: 'session',
       path: routes.AUTH_PREFIX,
     },
@@ -35,13 +35,12 @@ export default (authLogic, config, app) => {
   // /auth/callback
   router.get(routes.AUTH_CALLBACK, async (ctx) => {
     if (ctx.session.grant) {
-      const session = await authLogic.authCallback(ctx.session.grant.response);
-      Object.assign(ctx.session, session);
-      ctx.session.isLoggedIn = true;
+      await authLogic.authCallback(ctx.session.sessionId, ctx.session.grant);
 
       delete ctx.session.grant;
 
       ctx.response.body = 'Granted';
+      ctx.response.redirect(config.oauthConfig.redirectUri);
     } else {
       ctx.response.body = 'Callback data is missing';
     }
@@ -49,7 +48,7 @@ export default (authLogic, config, app) => {
 
   // /auth/revoke
   router.get(routes.AUTH_REVOKE,
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const revokeResult = await authLogic.revoke(ctx.session.userId);
 

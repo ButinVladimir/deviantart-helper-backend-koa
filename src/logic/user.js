@@ -1,6 +1,5 @@
 import { Worker } from 'worker_threads';
 import UserInfoOutput from '../output/user/info';
-import UserApi from '../api/user';
 import UserDao from '../dao/user';
 import Config from '../config/config';
 import FetchDataTaskModelFactory from '../models/task/factories/fetch-data-factory';
@@ -14,13 +13,11 @@ export default class UserLogic {
    * @description
    * The constructor.
    *
-   * @param {UserApi} userApi - DeviantArt user API.
    * @param {UserDao} userDao - User DAO.
    * @param {Worker} schedulerWorker - The task scheduler worker thread.
    * @param {Config} config - Config.
    */
-  constructor(userApi, userDao, schedulerWorker, config) {
-    this.userApi = userApi;
+  constructor(userDao, schedulerWorker, config) {
     this.userDao = userDao;
     this.schedulerWorker = schedulerWorker;
     this.config = config;
@@ -34,7 +31,7 @@ export default class UserLogic {
    * @returns {Object} UserInfo instance.
    */
   async getInfo(userId) {
-    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+    const userInfo = await this.userDao.getById(userId);
 
     return UserInfoOutput.prepareOutput(userInfo);
   }

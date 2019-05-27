@@ -1,6 +1,8 @@
 import AuthApi from '../api/auth';
+import UserApi from '../api/user';
 import GalleryApi from '../api/gallery';
 import DeviationApi from '../api/deviation';
+import SessionsDao from '../dao/sessions';
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
@@ -9,6 +11,7 @@ import * as taskNames from '../consts/task-names';
 import TaskModel from '../models/task/task';
 import BaseTask from './base';
 import RefreshAccessTokenTaskDecorator from './tasks/refresh-access-token-decorator';
+import LoadUserInfoTask from './tasks/load-user-info';
 import FetchDataTask from './tasks/fetch-data';
 import FetchDataAllUsersTask from './tasks/fetch-data-all-users';
 import LoadDeviationsTask from './tasks/load-deviations';
@@ -24,8 +27,10 @@ export default class TaskFactory {
    * The constructor.
    *
    * @param {AuthApi} authApi - DeviantArt auth API.
+   * @param {UserApi} userApi - DeviantArt user API.
    * @param {GalleryApi} galleryApi - DeviantArt gallery API.
    * @param {DeviationApi} deviationApi - DeviantArt deviation API.
+   * @param {SessionsDao} sessionsDao - The sessions DAO.
    * @param {UserDao} userDao - The user DAO.
    * @param {DeviationsDao} deviationsDao - The deviations DAO.
    * @param {DeviationsMetadataDao} deviationsMetadataDao - The deviations metadata DAO.
@@ -33,16 +38,20 @@ export default class TaskFactory {
    */
   constructor(
     authApi,
+    userApi,
     galleryApi,
     deviationApi,
+    sessionsDao,
     userDao,
     deviationsDao,
     deviationsMetadataDao,
     config,
   ) {
     this.authApi = authApi;
+    this.userApi = userApi;
     this.galleryApi = galleryApi;
     this.deviationApi = deviationApi;
+    this.sessionsDao = sessionsDao;
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
@@ -52,7 +61,7 @@ export default class TaskFactory {
   /**
    * @description
    * Creates task from task model, injects dependencies and
-   * wraps it in RefreshAccessTokenTaskDecorator.
+   * optionally wraps it in RefreshAccessTokenTaskDecorator.
    *
    * @param {TaskModel} taskModel - The TaskModel instance.
    * @returns {BaseTask} Task.
@@ -64,7 +73,8 @@ export default class TaskFactory {
 
     const internalTask = this.createTaskFromModelInternal(taskModel);
 
-    if (taskModel.name === taskNames.FETCH_DATA_ALL_USERS) {
+    if (taskModel.name === taskNames.LOAD_USER_INFO
+      || taskModel.name === taskNames.FETCH_DATA_ALL_USERS) {
       return internalTask;
     }
 
@@ -92,17 +102,42 @@ export default class TaskFactory {
    */
   createTaskFromModelInternal(taskModel) {
     switch (taskModel.name) {
+      case taskNames.LOAD_USER_INFO:
+        return this.createLoadUserInfoTask(taskModel);
+
       case taskNames.FETCH_DATA_ALL_USERS:
         return this.createFetchDataAllUsersTask();
+
       case taskNames.FETCH_DATA:
         return this.createFetchDataTask(taskModel);
+
       case taskNames.LOAD_DEVIATIONS:
         return this.createLoadDeviationsTask(taskModel);
+
       case taskNames.LOAD_DEVIATIONS_METADATA:
         return this.createLoadDeviationsMetadataTask(taskModel);
+
       default:
         return null;
     }
+  }
+
+  /**
+   * @description
+   * Creates LoadUserInfoTask instance from task model and injects dependencies.
+   *
+   * @param {TaskModel} taskModel - The TaskModel instance.
+   * @returns {LoadUserInfoTask} LoadUserInfoTask instance.
+   */
+  createLoadUserInfoTask(taskModel) {
+    return new LoadUserInfoTask(
+      taskModel.params,
+      this.authApi,
+      this.userApi,
+      this.userDao,
+      this.sessionsDao,
+      this.config,
+    );
   }
 
   /* eslint-disable class-methods-use-this */

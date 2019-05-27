@@ -6,7 +6,7 @@ import DeviationsMetadataInput from '../input/deviations/metadata';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
 import DeviationsTotalInput from '../input/deviations/total';
 import * as sort from '../consts/sort';
-import refreshAuthGuard from './refresh-auth-guard';
+import authGuard from './auth-guard';
 import * as routes from '../consts/routes';
 import DeviationsLogic from '../logic/deviations';
 
@@ -63,7 +63,7 @@ export default (deviationsLogic, app) => {
         },
       },
     },
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const input = new DeviationsBrowseInput();
       input.deviationIds = ctx.request.body.ids || null;
@@ -107,7 +107,7 @@ export default (deviationsLogic, app) => {
         },
       },
     },
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const input = new DeviationsDetailsInput();
       input.timestampBegin = ctx.query.timestampbegin || null;
@@ -147,7 +147,7 @@ export default (deviationsLogic, app) => {
         },
       },
     },
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const input = new DeviationsMetadataInput();
       input.deviationIds = ctx.request.body.ids || [];
@@ -216,7 +216,7 @@ export default (deviationsLogic, app) => {
         },
       },
     },
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const input = new DeviationsStatisticsInput();
       input.deviationIds = ctx.request.body.ids || null;
@@ -255,7 +255,7 @@ export default (deviationsLogic, app) => {
         },
       },
     },
-    refreshAuthGuard,
+    authGuard,
     async (ctx) => {
       const input = new DeviationsTotalInput();
       input.timestampBegin = ctx.query.timestampbegin || null;

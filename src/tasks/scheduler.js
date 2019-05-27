@@ -87,7 +87,9 @@ export default class TaskScheduler {
    * and updating delay before next task can be runned.
    */
   async handleCurrentTask() {
-    output(`Got task ${mark(this.currentTaskModel.name)} with id ${mark(this.currentTaskModel.id)} to run`);
+    output(`Got task ${mark(this.currentTaskModel.name)} to run`);
+    output(`Task id ${mark(this.currentTaskModel.id)} `);
+    output(`Task was created at ${mark(new Date(this.currentTaskModel.creationTime).toLocaleString())}`);
 
     this.currentTaskModel.setStartedState();
     await this.tasksDao.updateTask(this.currentTaskModel);

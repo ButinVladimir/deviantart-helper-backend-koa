@@ -54,7 +54,7 @@ export default class RefreshAccessTokenDecoratorTask extends BaseTask {
     if (Date.now() >= userInfo.accessToken.expires) {
       output(`User ${mark(userInfo.userName)} requires token refreshing`);
 
-      await userInfo.addAuthData(
+      await userInfo.setAuthData(
         await this.authApi.refresh(
           this.config.oauthConfig.key,
           this.config.oauthConfig.secret,

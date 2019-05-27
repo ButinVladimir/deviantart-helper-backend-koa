@@ -16,9 +16,9 @@ const decryptedTokenEncoding = 'utf8';
 const dbEncoding = 'base64';
 
 /**
- * User info token model object.
+ * Token model object.
  */
-export default class UserInfoTokenModel {
+export default class TokenModel {
   /**
    * @description
    * The constructor.

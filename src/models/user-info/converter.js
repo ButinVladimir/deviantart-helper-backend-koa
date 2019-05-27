@@ -1,5 +1,5 @@
 import UserInfoModel from './user-info';
-import UserInfoTokenModel from './token';
+import TokenModelConverter from '../token/converter';
 
 /**
  * Class to convert object from and into the UserInfoModel objects.
@@ -29,8 +29,8 @@ export default class UserInfoModelConverter {
    */
   static toDbObject(userInfo) {
     const result = {
-      accessToken: UserInfoModelConverter.tokenToDbObject(userInfo.accessToken),
-      refreshToken: UserInfoModelConverter.tokenToDbObject(userInfo.refreshToken),
+      accessToken: TokenModelConverter.toDbObject(userInfo.accessToken),
+      refreshToken: TokenModelConverter.toDbObject(userInfo.refreshToken),
       userName: userInfo.userName,
       userIcon: userInfo.userIcon,
       userType: userInfo.userType,
@@ -57,8 +57,8 @@ export default class UserInfoModelConverter {
   static fromDbObject(dbObject) {
     const userInfo = new UserInfoModel();
 
-    userInfo.accessToken = UserInfoModelConverter.tokenFromDbObject(dbObject.accessToken);
-    userInfo.refreshToken = UserInfoModelConverter.tokenFromDbObject(dbObject.refreshToken);
+    userInfo.accessToken = TokenModelConverter.fromDbObject(dbObject.accessToken);
+    userInfo.refreshToken = TokenModelConverter.fromDbObject(dbObject.refreshToken);
     // eslint-disable-next-line no-underscore-dangle
     userInfo.userId = dbObject._id;
     userInfo.userName = dbObject.userName;
@@ -68,48 +68,5 @@ export default class UserInfoModelConverter {
     userInfo.requestDateThreshold = dbObject.requestDateThreshold || null;
 
     return userInfo;
-  }
-
-  /**
-   * @description
-   * Converts token to DB object.
-   *
-   * @param {UserInfoTokenModel} token - The token model.
-   * @returns {Object} DB object.
-   */
-  static tokenToDbObject(token) {
-    if (token === null) {
-      return null;
-    }
-
-    return {
-      token: token.token,
-      expires: token.expires,
-      iv: token.iv,
-      authTag: token.authTag,
-      salt: token.salt,
-    };
-  }
-
-  /**
-   * @description
-   * Converts token to DB object.
-   *
-   * @param {Object} dbObject - The DB object.
-   * @returns {UserInfoTokenModel} The token model.
-   */
-  static tokenFromDbObject(dbObject) {
-    if (dbObject === null) {
-      return null;
-    }
-
-    const token = new UserInfoTokenModel();
-    token.token = dbObject.token;
-    token.expires = dbObject.expires;
-    token.iv = dbObject.iv;
-    token.authTag = dbObject.authTag;
-    token.salt = dbObject.salt;
-
-    return token;
   }
 }

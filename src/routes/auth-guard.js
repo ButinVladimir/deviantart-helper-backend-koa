@@ -1,3 +1,4 @@
+import { FULLY_LOGINNED } from '../consts/user-states';
 /**
  * @description
  * Auth guard middleware to check that resource is accessable
@@ -7,7 +8,7 @@
  * @param {Function} next - Callback.
  */
 export default async (ctx, next) => {
-  if (ctx.session.isLoggedIn && Date.now() < ctx.session.refreshTokenExpires) {
+  if (ctx.session.state === FULLY_LOGINNED && ctx.session.userId !== null) {
     await next();
   } else {
     ctx.throw(401);

@@ -1,10 +1,11 @@
-import UserInfoModel from '../models/user-info/user-info';
-import UserInfoModelConverter from '../models/user-info/converter';
+import { Worker } from 'worker_threads';
 import AuthApi from '../api/auth';
-import UserApi from '../api/user';
+import SessionsDao from '../dao/sessions';
 import UserDao from '../dao/user';
 import Config from '../config/config';
-import { fetchUserInfoAndCheckRefreshToken } from '../helper';
+import SessionModel from '../models/session/session';
+import LoadUserInfoTaskModelFactory from '../models/task/factories/load-user-info-factory';
+import { FETCHING_INFO } from '../consts/user-states';
 
 /**
  * Logic for auth part.
@@ -15,14 +16,16 @@ export default class AuthLogic {
    * The constructor.
    *
    * @param {AuthApi} authApi - DeviantArt auth API.
-   * @param {UserApi} userApi - DeviantArt user API.
+   * @param {SessionsDao} sessionsDao - Sessions DAO.
    * @param {UserDao} userDao - User DAO.
+   * @param {Worker} schedulerWorker - The task scheduler worker thread.
    * @param {Config} config - Config.
    */
-  constructor(authApi, userApi, userDao, config) {
+  constructor(authApi, sessionsDao, userDao, schedulerWorker, config) {
     this.authApi = authApi;
-    this.userApi = userApi;
+    this.sessionsDao = sessionsDao;
     this.userDao = userDao;
+    this.schedulerWorker = schedulerWorker;
     this.config = config;
   }
 
@@ -30,17 +33,21 @@ export default class AuthLogic {
    * @description
    * Callback for authentication.
    *
-   * @param {Object} grantResponse - Response from grant.
-   * @returns {Object} Session data object.
+   * @param {string} sessionId - The session ID.
+   * @param {Object} grantResponse - Encrypted response from grant.
    */
-  async authCallback(grantResponse) {
-    const userInfo = new UserInfoModel();
-    await userInfo.addAuthData(grantResponse, this.config);
-    userInfo.addWhoAmIData(await this.userApi.whoAmI(userInfo));
+  async authCallback(sessionId, grantResponse) {
+    const session = new SessionModel();
+    session.state = FETCHING_INFO;
+    await this.sessionsDao.setUserDataById(sessionId, session);
 
-    await this.userDao.update(userInfo);
-
-    return UserInfoModelConverter.toSessionData(userInfo);
+    this.schedulerWorker.postMessage(
+      LoadUserInfoTaskModelFactory.createModel(
+        sessionId,
+        grantResponse.accessToken,
+        grantResponse.refreshToken,
+      ),
+    );
   }
 
   /**
@@ -51,7 +58,7 @@ export default class AuthLogic {
    * @returns {boolean} Success of operation.
    */
   async revoke(userId) {
-    const userInfo = await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
+    const userInfo = await this.userDao.getById(userId);
     const result = await this.authApi.revoke(userInfo);
 
     if (result) {

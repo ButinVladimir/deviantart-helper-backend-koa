@@ -8,12 +8,13 @@ import { ENVIRONMENT_DEVELOPMENT } from './consts/environments';
 import Config from './config/config';
 
 import AuthApi from './api/auth';
-import UserApi from './api/user';
 
+import SessionsDao from './dao/sessions';
 import UserDao from './dao/user';
 import DeviationsDao from './dao/deviations';
 import DeviationsMetadataDao from './dao/deviations-metadata';
 
+import SessionsLogic from './logic/sessions';
 import AuthLogic from './logic/auth';
 import UserLogic from './logic/user';
 import DeviationsLogic from './logic/deviations';
@@ -22,7 +23,6 @@ import errorHandler from './routes/error-handler';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
 import deviationsRoutes from './routes/deviations';
-import devSessionMiddleware from './dev-session';
 
 import { outputError } from './helper';
 
@@ -40,30 +40,30 @@ export default (db, schedulerWorker, config) => {
     const app = new Koa();
     app.use(logger());
 
+    const sessionsDao = new SessionsDao(db);
+    const sessionsLogic = new SessionsLogic(sessionsDao, config);
     app.keys = [config.serverConfig.cookieKey];
     app.use(session({
       renew: true,
+      store: sessionsLogic.createStore(),
     }, app));
 
     if (config.environment === ENVIRONMENT_DEVELOPMENT) {
       app.use(cors({
         credentials: true,
       }));
-
-      devSessionMiddleware(app);
     }
 
     app.use(errorHandler);
 
     const authApi = new AuthApi(config);
-    const userApi = new UserApi(config);
 
     const userDao = new UserDao(db);
     const deviationsDao = new DeviationsDao(db);
     const deviationsMetadataDao = new DeviationsMetadataDao(db);
 
-    const authLogic = new AuthLogic(authApi, userApi, userDao, config);
-    const userLogic = new UserLogic(userApi, userDao, schedulerWorker, config);
+    const authLogic = new AuthLogic(authApi, sessionsDao, userDao, schedulerWorker, config);
+    const userLogic = new UserLogic(userDao, schedulerWorker, config);
     const deviationsLogic = new DeviationsLogic(
       userDao,
       deviationsDao,

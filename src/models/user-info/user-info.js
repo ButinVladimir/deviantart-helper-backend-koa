@@ -1,5 +1,5 @@
 import Config from '../../config/config';
-import UserInfoTokenModel from './token';
+import TokenModel from '../token/token';
 
 /**
  * User info model object.
@@ -28,15 +28,15 @@ export default class UserInfoModel {
    * @param {Config} config - The config.
    * @returns {UserInfoModel} Self.
    */
-  async addAuthData(grantResponse, config) {
-    this.accessToken = new UserInfoTokenModel();
+  async setAuthData(grantResponse, config) {
+    this.accessToken = new TokenModel();
     await this.accessToken.encrypt(
       grantResponse.access_token,
       Date.now() + config.oauthConfig.accessTokenWindow,
       config,
     );
 
-    this.refreshToken = new UserInfoTokenModel();
+    this.refreshToken = new TokenModel();
     await this.refreshToken.encrypt(
       grantResponse.refresh_token,
       Date.now() + config.oauthConfig.refreshTokenWindow,

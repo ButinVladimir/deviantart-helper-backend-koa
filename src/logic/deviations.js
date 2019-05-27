@@ -12,7 +12,6 @@ import DeviationsDetailsOutput from '../output/deviations/details';
 import DeviationsMetadataOutput from '../output/deviations/metadata';
 import DeviationsStatisticsOutput from '../output/deviations/statistics';
 import DeviationsTotalOutput from '../output/deviations/total';
-import { fetchUserInfoAndCheckRefreshToken } from '../helper';
 
 /**
  * Logic for deviations part.
@@ -44,8 +43,6 @@ export default class DeviationsLogic {
    * @returns {Object[]} Deviations.
    */
   async browse(userId, input, page) {
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
     const deviations = await this.deviationsDao.getThumbnailsByUser(
       userId,
       input,
@@ -70,8 +67,6 @@ export default class DeviationsLogic {
    * @returns {Object} Deviation details.
    */
   async details(userId, deviationId, input) {
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
     const deviation = await this.deviationsDao.getByIdAndUser(
       userId,
       deviationId,
@@ -97,8 +92,6 @@ export default class DeviationsLogic {
    * @returns {Object} Metadata.
    */
   async metadata(userId, input) {
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
     const metadata = input.deviationIds
       ? await this.deviationsMetadataDao
         .getByIdsAndUser(userId, input.deviationIds, input)
@@ -117,8 +110,6 @@ export default class DeviationsLogic {
    * @returns {Object} Deviations statistics.
    */
   async statistics(userId, input, page) {
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
     const deviations = await this.deviationsDao.getStatisticsByUser(
       userId,
       input,
@@ -154,8 +145,6 @@ export default class DeviationsLogic {
    * @returns {Object} Deviations total statistics.
    */
   async totalStatistics(userId, input) {
-    await fetchUserInfoAndCheckRefreshToken(userId, this.userDao);
-
     const statistics = await this.deviationsDao.getTotalStatisticsByUser(
       userId,
       input,
