@@ -6,29 +6,17 @@ export default class OAuthConfig {
    * @description
    * The constructor.
    *
-   * @param {string} key - Client key.
-   * @param {string} secret - Client secret.
-   * @param {string} tokenKey - The token encryption key.
-   * @param {string} callbackUri - Callback URI.
-   * @param {string} redirectUri - Redirect URI.
-   * @param {number} accessTokenWindow - Window when access token is active.
-   * @param {number} refreshTokenWindow - Window when refresh token is active.
+   * @param {Object} configObject - The parsed JSON config.
    */
   constructor(
-    key,
-    secret,
-    tokenKey,
-    callbackUri,
-    redirectUri,
-    accessTokenWindow,
-    refreshTokenWindow,
+    configObject,
   ) {
-    this.key = key;
-    this.secret = secret;
-    this.tokenKey = tokenKey;
-    this.callbackUri = callbackUri;
-    this.redirectUri = redirectUri;
-    this.accessTokenWindow = accessTokenWindow;
-    this.refreshTokenWindow = refreshTokenWindow;
+    this.key = configObject.key;
+    this.secret = configObject.secret;
+    this.tokenKey = configObject.tokenKey;
+    this.callbackUri = configObject.callbackUri;
+    this.redirectUri = configObject.redirectUri;
+    this.accessTokenWindow = configObject.accessTokenWindow;
+    this.refreshTokenWindow = configObject.refreshTokenWindow;
   }
 }

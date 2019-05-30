@@ -4,6 +4,16 @@ import UserInfoModel from '../../models/user-info/user-info';
  * Class to prepare output for 'user/info' route.
  */
 export default class UserInfoOutput {
+  static prepareOutput(fullyLoginned, userInfo) {
+    const output = { fullyLoginned };
+
+    if (fullyLoginned) {
+      Object.assign(output, UserInfoOutput.prepareUserInfoOutput(userInfo));
+    }
+
+    return output;
+  }
+
   /**
    * @description
    * Prepares UserInfoModel to output for client.
@@ -11,7 +21,7 @@ export default class UserInfoOutput {
    * @param {UserInfoModel} userInfo - UserInfoModel instance.
    * @returns {Object} Object for client.
    */
-  static prepareOutput(userInfo) {
+  static prepareUserInfoOutput(userInfo) {
     return {
       userId: userInfo.userId,
       userName: userInfo.userName,

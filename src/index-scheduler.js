@@ -1,10 +1,11 @@
 import { MongoClient } from 'mongodb';
 import { parentPort } from 'worker_threads';
-import config from './config';
+import getConfig from './get-config';
 import createScheduler from './create-scheduler';
 import TaskModelBaseFactory from './models/task/base-factory';
 import { output, outputError } from './helper';
 
+const config = getConfig();
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
 });

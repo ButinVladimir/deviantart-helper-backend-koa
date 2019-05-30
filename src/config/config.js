@@ -4,6 +4,7 @@ import OAuthConfig from './oauth';
 import SchedulerConfig from './scheduler';
 import ApiConfig from './api';
 import DaoConfig from './dao';
+import RateLimitConfig from './rate-limit';
 
 /**
  * Config.
@@ -13,29 +14,18 @@ export default class Config {
    * @description
    * The constructor.
    *
-   * @param {ServerConfig} serverConfig - The server config.
-   * @param {DbConfig} dbConfig - The DB config.
-   * @param {OAuthConfig} oauthConfig - The OAuth config.
-   * @param {SchedulerConfig} schedulerConfig - The task scheduler config.
-   * @param {ApiConfig} apiConfig - The DeviantArt API config.
-   * @param {DaoConfig} daoConfig - The DAO config.
-   * @param {string} environment - Environment, development or production.
+   * @param {Object} configObject - The parsed JSON config.
    */
   constructor(
-    serverConfig,
-    dbConfig,
-    oauthConfig,
-    schedulerConfig,
-    apiConfig,
-    daoConfig,
-    environment,
+    configObject,
   ) {
-    this.serverConfig = serverConfig;
-    this.dbConfig = dbConfig;
-    this.oauthConfig = oauthConfig;
-    this.schedulerConfig = schedulerConfig;
-    this.apiConfig = apiConfig;
-    this.daoConfig = daoConfig;
-    this.environment = environment;
+    this.serverConfig = new ServerConfig(configObject.server);
+    this.dbConfig = new DbConfig(configObject.db);
+    this.oauthConfig = new OAuthConfig(configObject.oauth);
+    this.schedulerConfig = new SchedulerConfig(configObject.scheduler);
+    this.apiConfig = new ApiConfig(configObject.api);
+    this.daoConfig = new DaoConfig(configObject.dao);
+    this.rateLimitConfig = new RateLimitConfig(configObject.rateLimit);
+    this.environment = configObject.environment;
   }
 }

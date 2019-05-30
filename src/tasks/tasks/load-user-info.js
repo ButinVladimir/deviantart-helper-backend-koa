@@ -85,7 +85,7 @@ export default class LoadUserInfoTask extends BaseTask {
     }
 
     output('Getting user info');
-    userInfo.addWhoAmIData(await this.userApi.whoAmI(userInfo));
+    userInfo.setWhoAmIData(await this.userApi.whoAmI(userInfo));
     output(`Got info for user ${mark(userInfo.userName)}`);
 
     await this.userDao.update(userInfo);

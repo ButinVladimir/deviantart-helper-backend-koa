@@ -1,8 +1,6 @@
 import SessionsDao from '../dao/sessions';
 import Config from '../config/config';
 import SessionModel from '../models/session/session';
-import TokenModelConverter from '../models/token/converter';
-import UserInfoModel from '../models/user-info/user-info';
 
 /**
  * Logic for session part.
@@ -67,18 +65,6 @@ export default class SessionsLogic {
     const sessionModel = new SessionModel();
     if (sessionValues) {
       Object.assign(sessionModel.values, sessionValues);
-    }
-
-    // Grant saves tokens unencrypted. To avoid this, response is encrypted manually
-    // and grant response will replaced with encrypted tokens.
-    if (sessionModel.values.grant && sessionModel.values.grant.response) {
-      const userInfo = new UserInfoModel();
-      await userInfo.setAuthData(sessionModel.values.grant.response, this.config);
-
-      sessionModel.values.grant = {
-        accessToken: TokenModelConverter.toDbObject(userInfo.accessToken),
-        refreshToken: TokenModelConverter.toDbObject(userInfo.refreshToken),
-      };
     }
 
     // Session ID shouldn't be saved.

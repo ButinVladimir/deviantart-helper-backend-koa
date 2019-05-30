@@ -6,14 +6,12 @@ export default class ApiConfig {
    * @description
    * The constructor.
    *
-   * @param {number} limitDeviations - Limit to fetch deviations from API.
-   * @param {number} limitDeviationsMetadata - Limit to fetch deviations metadata from API.
+   * @param {Object} configObject - The parsed JSON config.
    */
   constructor(
-    limitDeviations,
-    limitDeviationsMetadata,
+    configObject,
   ) {
-    this.limitDeviations = limitDeviations;
-    this.limitDeviationsMetadata = limitDeviationsMetadata;
+    this.limitDeviations = configObject.limitDeviations;
+    this.limitDeviationsMetadata = configObject.limitDeviationsMetadata;
   }
 }

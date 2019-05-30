@@ -4,8 +4,10 @@ import SessionsDao from '../dao/sessions';
 import UserDao from '../dao/user';
 import Config from '../config/config';
 import SessionModel from '../models/session/session';
+import TokenModelConverter from '../models/token/converter';
 import LoadUserInfoTaskModelFactory from '../models/task/factories/load-user-info-factory';
-import { FETCHING_INFO } from '../consts/user-states';
+import { FETCHING_INFO, FULLY_LOGINNED } from '../consts/user-states';
+import UserInfoModel from '../models/user-info/user-info';
 
 /**
  * Logic for auth part.
@@ -55,14 +57,26 @@ export default class AuthLogic {
    * Revokes user session.
    *
    * @param {string} userId - The user id.
+   * @param {number} state - The user state.
+   * @param {Object} grantResponse - Encrypted response from grant.
    * @returns {boolean} Success of operation.
    */
-  async revoke(userId) {
-    const userInfo = await this.userDao.getById(userId);
+  async revoke(userId, state, grantResponse) {
+    let userInfo;
+
+    if (state === FETCHING_INFO) {
+      userInfo = new UserInfoModel();
+      userInfo.refreshToken = TokenModelConverter.fromDbObject(grantResponse.refreshToken);
+    } else {
+      userInfo = await this.userDao.getById(userId);
+    }
+
     const result = await this.authApi.revoke(userInfo);
 
     if (result) {
-      await this.userDao.update(userInfo.revoke());
+      if (state === FULLY_LOGINNED) {
+        await this.userDao.update(userInfo.revoke());
+      }
 
       return true;
     }

@@ -4,8 +4,13 @@ import logger from 'koa-logger';
 import session from 'koa-session';
 import cors from '@koa/cors';
 import { Db } from 'mongodb';
+import { RateLimit } from 'koa2-ratelimit';
+import serve from 'koa-static';
+import { join } from 'path';
+
 import { ENVIRONMENT_DEVELOPMENT } from './consts/environments';
 import Config from './config/config';
+import sessionHandler from './session-handler';
 
 import AuthApi from './api/auth';
 
@@ -40,6 +45,14 @@ export default (db, schedulerWorker, config) => {
     const app = new Koa();
     app.use(logger());
 
+    const limiter = RateLimit.middleware({
+      interval: config.rateLimitConfig.interval,
+      max: config.rateLimitConfig.max,
+      delayAfter: config.rateLimitConfig.delayAfter,
+      timeWait: config.rateLimitConfig.timeWait,
+    });
+    app.use(limiter);
+
     const sessionsDao = new SessionsDao(db);
     const sessionsLogic = new SessionsLogic(sessionsDao, config);
     app.keys = [config.serverConfig.cookieKey];
@@ -55,6 +68,12 @@ export default (db, schedulerWorker, config) => {
     }
 
     app.use(errorHandler);
+    app.use(sessionHandler(config));
+
+    app.use(serve(
+      join(process.cwd(), '/public'),
+      { maxage: config.serverConfig.staticMaxAge },
+    ));
 
     const authApi = new AuthApi(config);
 

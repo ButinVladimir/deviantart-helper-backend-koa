@@ -1,9 +1,10 @@
 import { MongoClient } from 'mongodb';
-import config from './config';
+import getConfig from './get-config';
 import FetchDataAllUsersTaskModelFactory from './models/task/factories/fetch-data-all-users-factory';
 import TasksDao from './dao/tasks';
 import { output, outputError } from './helper';
 
+const config = getConfig();
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
 });

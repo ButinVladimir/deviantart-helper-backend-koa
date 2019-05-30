@@ -285,61 +285,7 @@ export default class DeviationsDao {
    */
   static prepareStatisticsBeginDataQuery(input) {
     if (input.timestampBegin) {
-      return [
-        {
-          $lookup: {
-            from: 'deviations_metadata',
-            let: { deviationId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$deviationId', '$$deviationId'] },
-                      { $lt: ['$timestamp', input.timestampBegin] },
-                    ],
-                  },
-                },
-              },
-              {
-                $sort: {
-                  timestamp: -1,
-                },
-              },
-              {
-                $project: {
-                  timestamp: 1,
-                  views: 1,
-                  favourites: 1,
-                  comments: 1,
-                  downloads: 1,
-                  _id: 0,
-                },
-              },
-              {
-                $limit: 1,
-              },
-            ],
-            as: 'periodBeginData',
-          },
-        },
-        {
-          $addFields: {
-            periodBeginData: {
-              $cond: {
-                if: { $gt: [{ $size: '$periodBeginData' }, 0] },
-                then: { $arrayElemAt: ['$periodBeginData', 0] },
-                else: {
-                  views: 0,
-                  favourites: 0,
-                  comments: 0,
-                  downloads: 0,
-                },
-              },
-            },
-          },
-        },
-      ];
+      return DeviationsDao.prepareStatisticsBorderDataQuery(input.timestampBegin, 'periodBeginData');
     }
 
     return [
@@ -365,61 +311,7 @@ export default class DeviationsDao {
    */
   static prepareStatisticsEndDataQuery(input) {
     if (input.timestampEnd) {
-      return [
-        {
-          $lookup: {
-            from: 'deviations_metadata',
-            let: { deviationId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$deviationId', '$$deviationId'] },
-                      { $lte: ['$timestamp', input.timestampEnd] },
-                    ],
-                  },
-                },
-              },
-              {
-                $sort: {
-                  timestamp: -1,
-                },
-              },
-              {
-                $project: {
-                  timestamp: 1,
-                  views: 1,
-                  favourites: 1,
-                  comments: 1,
-                  downloads: 1,
-                  _id: 0,
-                },
-              },
-              {
-                $limit: 1,
-              },
-            ],
-            as: 'periodEndData',
-          },
-        },
-        {
-          $addFields: {
-            periodEndData: {
-              $cond: {
-                if: { $gt: [{ $size: '$periodEndData' }, 0] },
-                then: { $arrayElemAt: ['$periodEndData', 0] },
-                else: {
-                  views: 0,
-                  favourites: 0,
-                  comments: 0,
-                  downloads: 0,
-                },
-              },
-            },
-          },
-        },
-      ];
+      return DeviationsDao.prepareStatisticsBorderDataQuery(input.timestampEnd, 'periodEndData');
     }
 
     return [
@@ -430,6 +322,72 @@ export default class DeviationsDao {
             favourites: '$favourites',
             comments: '$comments',
             downloads: '$downloads',
+          },
+        },
+      },
+    ];
+  }
+
+  /**
+   * @description
+   * Prepares query to fetch data for deviation statistics for the border of time period.
+   *
+   * @param {number} timestamp - The timestamp.
+   * @param {string} fieldName - The name of the field with border data.
+   * @returns {Array[]} The query.
+   */
+  static prepareStatisticsBorderDataQuery(timestamp, fieldName) {
+    return [
+      {
+        $lookup: {
+          from: 'deviations_metadata',
+          let: { deviationId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$deviationId', '$$deviationId'] },
+                    { $lte: ['$timestamp', timestamp] },
+                  ],
+                },
+              },
+            },
+            {
+              $sort: {
+                timestamp: -1,
+              },
+            },
+            {
+              $project: {
+                timestamp: 1,
+                views: 1,
+                favourites: 1,
+                comments: 1,
+                downloads: 1,
+                _id: 0,
+              },
+            },
+            {
+              $limit: 1,
+            },
+          ],
+          as: fieldName,
+        },
+      },
+      {
+        $addFields: {
+          [fieldName]: {
+            $cond: {
+              if: { $gt: [{ $size: `$${fieldName}` }, 0] },
+              then: { $arrayElemAt: [`$${fieldName}`, 0] },
+              else: {
+                views: 0,
+                favourites: 0,
+                comments: 0,
+                downloads: 0,
+              },
+            },
           },
         },
       },

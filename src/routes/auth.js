@@ -2,8 +2,8 @@ import Koa from 'koa';
 import mount from 'koa-mount';
 import grant from 'grant-koa';
 import Router from 'koa-joi-router';
-import authGuard from './auth-guard';
 import * as routes from '../consts/routes';
+import { NOT_LOGGINED } from '../consts/user-states';
 import Config from '../config/config';
 import AuthLogic from '../logic/auth';
 
@@ -37,24 +37,28 @@ export default (authLogic, config, app) => {
     if (ctx.session.grant) {
       await authLogic.authCallback(ctx.session.sessionId, ctx.session.grant);
 
-      delete ctx.session.grant;
-
       ctx.response.body = 'Granted';
       ctx.response.redirect(config.oauthConfig.redirectUri);
     } else {
-      ctx.response.body = 'Callback data is missing';
+      ctx.throw(500, 'Callback data is missing');
     }
   });
 
   // /auth/revoke
-  router.get(routes.AUTH_REVOKE,
-    authGuard,
-    async (ctx) => {
-      const revokeResult = await authLogic.revoke(ctx.session.userId);
+  router.get(routes.AUTH_REVOKE, async (ctx) => {
+    if (ctx.session.state === NOT_LOGGINED) {
+      ctx.throw(401);
+    }
 
-      ctx.response.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
-      ctx.session = null;
-    });
+    const revokeResult = await authLogic.revoke(
+      ctx.session.userId,
+      ctx.session.state,
+      ctx.session.grant,
+    );
+
+    ctx.response.body = { status: revokeResult ? 'Revoked' : 'Something went wrong' };
+    ctx.session = null;
+  });
 
   router.prefix(routes.AUTH_PREFIX);
   app.use(router.middleware());

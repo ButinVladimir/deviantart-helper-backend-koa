@@ -22,7 +22,7 @@ export default class UserInfoModel {
 
   /**
    * @description
-   * Adds auth data.
+   * Sets auth data.
    *
    * @param {Object} grantResponse - Response from grant.
    * @param {Config} config - The config.
@@ -48,12 +48,12 @@ export default class UserInfoModel {
 
   /**
    * @description
-   * Adds 'user/who-am-i' data from DeviantArt API.
+   * Sets 'user/who-am-i' data from DeviantArt API.
    *
    * @param {Object} whoAmIData - DeviantArt API response.
    * @returns {UserInfoModel} Self.
    */
-  addWhoAmIData(whoAmIData) {
+  setWhoAmIData(whoAmIData) {
     this.userId = whoAmIData.userid;
     this.userName = whoAmIData.username;
     this.userIcon = whoAmIData.usericon;

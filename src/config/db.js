@@ -6,14 +6,12 @@ export default class DbConfig {
    * @description
    * The constructor.
    *
-   * @param {string} connectionString - Connection string for MongoDB.
-   * @param {string} dbName - MongoDB DB name.
+   * @param {Object} configObject - The parsed JSON config.
    */
   constructor(
-    connectionString,
-    dbName,
+    configObject,
   ) {
-    this.connectionString = connectionString;
-    this.dbName = dbName;
+    this.connectionString = configObject.connectionString;
+    this.dbName = configObject.dbName;
   }
 }

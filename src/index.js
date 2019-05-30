@@ -1,10 +1,11 @@
 import { Worker } from 'worker_threads';
 import { join } from 'path';
 import { MongoClient } from 'mongodb';
-import config from './config';
+import getConfig from './get-config';
 import createApplication from './create-application';
 import { output, outputError } from './helper';
 
+const config = getConfig();
 const dbClient = new MongoClient(config.dbConfig.connectionString, {
   useNewUrlParser: true,
 });

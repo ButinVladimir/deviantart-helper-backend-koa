@@ -1,6 +1,7 @@
 import { Worker } from 'worker_threads';
 import UserInfoOutput from '../output/user/info';
 import UserDao from '../dao/user';
+import { FULLY_LOGINNED } from '../consts/user-states';
 import Config from '../config/config';
 import FetchDataTaskModelFactory from '../models/task/factories/fetch-data-factory';
 import { fetchUserInfoAndCheckRefreshToken, checkThreshold } from '../helper';
@@ -28,12 +29,18 @@ export default class UserLogic {
    * Returns user info for client.
    *
    * @param {string} userId - The user id.
+   * @param {number} state - The user state.
    * @returns {Object} UserInfo instance.
    */
-  async getInfo(userId) {
-    const userInfo = await this.userDao.getById(userId);
+  async getInfo(userId, state) {
+    const fullyLoginned = state === FULLY_LOGINNED;
 
-    return UserInfoOutput.prepareOutput(userInfo);
+    let userInfo = null;
+    if (fullyLoginned) {
+      userInfo = await this.userDao.getById(userId);
+    }
+
+    return UserInfoOutput.prepareOutput(fullyLoginned, userInfo);
   }
 
   /**

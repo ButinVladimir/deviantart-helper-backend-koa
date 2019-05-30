@@ -6,15 +6,12 @@ export default class DaoConfig {
    * @description
    * The constructor.
    *
-   * @param {number} limitDeviationsBrowse - Limit to fetch deviations to browse from DAO.
-   * @param {number} limitDeviationsStatistics
-   * - Limit to fetch deviations to see statistics from DAO.
+   * @param {Object} configObject - The parsed JSON config.
    */
   constructor(
-    limitDeviationsBrowse,
-    limitDeviationsStatistics,
+    configObject,
   ) {
-    this.limitDeviationsBrowse = limitDeviationsBrowse;
-    this.limitDeviationsStatistics = limitDeviationsStatistics;
+    this.limitDeviationsBrowse = configObject.limitDeviationsBrowse;
+    this.limitDeviationsStatistics = configObject.limitDeviationsStatistics;
   }
 }

@@ -1,0 +1,45 @@
+{
+  "server": {
+    "port": 8000,
+    "cookieKey": "secretCookieKey",
+    "staticMaxAge": 86400000
+  },
+  "db": {
+    "connectionString": "path/to/mongodb/instance",
+    "dbName": "db"
+  },
+  "oauth": {
+    "key": "oauthKey",
+    "secret": "oauthSecret",
+    "tokenKey": "tokenKey",
+    "callbackUri": "path/to/server/connect/deviantart/callback",
+    "redirectUri": "path/to/client",
+    "accessTokenWindow": 3000000,
+    "refreshTokenWindow": 6912000000
+  },
+  "scheduler": {
+    "readOnly": false,
+    "maxAttempts": 6,
+    "minDelay": 1000,
+    "maxDelay": 600000,
+    "successDelayCoefficient": 0.75,
+    "failureDelayCoefficient": 4,
+    "fetchDataWindow": 300000,
+    "requestFetchDataWindow": 600000
+  },
+  "api": {
+    "limitDeviations": 10,
+    "limitDeviationsMetadata": 10
+  },
+  "dao": {
+    "limitDeviationsBrowse": 10,
+    "limitDeviationsStatistics": 7
+  },
+  "rateLimit": {
+    "interval": 60000,
+    "max": 100,
+    "delayAfter": 50,
+    "timeWait": 1000
+  },
+  "environment": "development"
+}
