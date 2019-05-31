@@ -88,6 +88,25 @@ export default class LoadUserInfoTask extends BaseTask {
     userInfo.setWhoAmIData(await this.userApi.whoAmI(userInfo));
     output(`Got info for user ${mark(userInfo.userName)}`);
 
+    const existingUserInfo = await this.userDao.getById(userInfo.userId);
+    if (existingUserInfo) {
+      output(`User with ID ${mark(userInfo.userId)} has been found in DB`);
+
+      if (existingUserInfo.accessToken !== null
+        && existingUserInfo.accessToken.expires > userInfo.accessToken.expires) {
+        output(`User ${userInfo.userName} has newer access token in DB`);
+        Object.assign(userInfo.accessToken, existingUserInfo.accessToken);
+      }
+
+      if (existingUserInfo.refreshToken !== null
+        && existingUserInfo.refreshToken.expires > userInfo.refreshToken.expires) {
+        output(`User ${userInfo.userName} has newer refresh token in DB`);
+        Object.assign(userInfo.refreshToken, existingUserInfo.refreshToken);
+      }
+    } else {
+      output(`User with ID ${mark(userInfo.userId)} hasn't been found in DB`);
+    }
+
     await this.userDao.update(userInfo);
 
     output(`Updating session ${mark(this.sessionId)}`);

@@ -64,6 +64,8 @@ export default class UserDao {
    */
   async getUserIdsForRefreshing() {
     const users = await this.db.collection(COLLECTION_USERS).find({
+      accessToken: { $not: { $eq: null } },
+      refreshToken: { $not: { $eq: null } },
       $or: [
         { fetchDateThreshold: { $lte: Date.now() } },
         { fetchDateThreshold: { $exists: false } },

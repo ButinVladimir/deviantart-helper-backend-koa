@@ -71,7 +71,7 @@ export default (db, schedulerWorker, config) => {
     app.use(sessionHandler(config));
 
     app.use(serve(
-      join(process.cwd(), '/public'),
+      join(__dirname, '..', '/public'),
       { maxage: config.serverConfig.staticMaxAge },
     ));
 
