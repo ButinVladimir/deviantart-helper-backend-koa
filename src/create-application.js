@@ -2,11 +2,13 @@ import { Worker } from 'worker_threads';
 import Koa from 'koa';
 import logger from 'koa-logger';
 import session from 'koa-session';
+import compress from 'koa-compress';
 import cors from '@koa/cors';
 import { Db } from 'mongodb';
 import { RateLimit } from 'koa2-ratelimit';
 import serve from 'koa-static';
 import { join } from 'path';
+import { Z_SYNC_FLUSH } from 'zlib';
 
 import { ENVIRONMENT_DEVELOPMENT } from './consts/environments';
 import Config from './config/config';
@@ -52,6 +54,10 @@ export default (db, schedulerWorker, config) => {
       timeWait: config.rateLimitConfig.timeWait,
     });
     app.use(limiter);
+
+    app.use(compress({
+      flush: Z_SYNC_FLUSH,
+    }));
 
     const sessionsDao = new SessionsDao(db);
     const sessionsLogic = new SessionsLogic(sessionsDao, config);

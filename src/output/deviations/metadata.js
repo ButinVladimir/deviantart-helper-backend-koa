@@ -16,13 +16,13 @@ export default class DeviationsMetadataOutput {
 
     metadata.forEach((dm) => {
       result[dm.deviationId] = result[dm.deviationId] || [];
-      result[dm.deviationId].push({
-        timestamp: dm.timestamp,
-        views: dm.views,
-        comments: dm.comments,
-        favourites: dm.favourites,
-        downloads: dm.downloads,
-      });
+      result[dm.deviationId].push([
+        dm.timestamp,
+        dm.views,
+        dm.comments,
+        dm.favourites,
+        dm.downloads,
+      ]);
     });
 
     return result;

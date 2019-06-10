@@ -12,6 +12,9 @@
 # flow-typed
 /flow-typed
 
+# static files
+/public
+
 # misc
 .DS_Store
 .env.local

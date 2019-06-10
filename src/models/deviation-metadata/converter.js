@@ -34,13 +34,13 @@ export default class DeviationMetadataModelConverter {
    */
   static toDbObject(deviationModel) {
     return {
-      deviationId: deviationModel.deviationId,
-      userId: deviationModel.userId,
-      timestamp: deviationModel.timestamp,
-      views: deviationModel.views,
-      comments: deviationModel.comments,
-      favourites: deviationModel.favourites,
-      downloads: deviationModel.downloads,
+      eid: deviationModel.deviationId,
+      uid: deviationModel.userId,
+      ts: deviationModel.timestamp,
+      v: deviationModel.views,
+      c: deviationModel.comments,
+      f: deviationModel.favourites,
+      d: deviationModel.downloads,
     };
   }
 
@@ -54,13 +54,13 @@ export default class DeviationMetadataModelConverter {
   static fromDbObject(dbObject) {
     const deviationMetadata = new DeviationMetadataModel();
 
-    deviationMetadata.deviationId = dbObject.deviationId;
-    deviationMetadata.userId = dbObject.userId;
-    deviationMetadata.timestamp = dbObject.timestamp;
-    deviationMetadata.views = dbObject.views;
-    deviationMetadata.comments = dbObject.comments;
-    deviationMetadata.favourites = dbObject.favourites;
-    deviationMetadata.downloads = dbObject.downloads;
+    deviationMetadata.deviationId = dbObject.eid;
+    deviationMetadata.userId = dbObject.uid;
+    deviationMetadata.timestamp = dbObject.ts;
+    deviationMetadata.views = dbObject.v;
+    deviationMetadata.comments = dbObject.c;
+    deviationMetadata.favourites = dbObject.f;
+    deviationMetadata.downloads = dbObject.d;
 
     return deviationMetadata;
   }

@@ -57,11 +57,11 @@ export default class DeviationsMetadataDao {
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS_METADATA).find(
       query,
       {
-        sort: { timestamp: 1 },
+        sort: { ts: 1 },
         projection: {
           _id: 0,
-          deviationId: 0,
-          userId: 0,
+          eid: 0,
+          uid: 0,
         },
       },
     ).toArray();
@@ -85,10 +85,10 @@ export default class DeviationsMetadataDao {
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS_METADATA).find(
       query,
       {
-        sort: { timestamp: 1 },
+        sort: { ts: 1 },
         projection: {
           _id: 0,
-          userId: 0,
+          uid: 0,
         },
       },
     ).toArray();
@@ -106,18 +106,18 @@ export default class DeviationsMetadataDao {
    * @returns {Object} The query.
    */
   static prepareQueryById(userId, deviationId, input) {
-    const query = { userId, deviationId };
+    const query = { uid: userId, eid: deviationId };
 
     if (input.timestampBegin || input.timestampEnd) {
-      query.timestamp = {};
+      query.ts = {};
     }
 
     if (input.timestampBegin) {
-      query.timestamp.$gte = input.timestampBegin;
+      query.ts.$gte = input.timestampBegin;
     }
 
     if (input.timestampEnd) {
-      query.timestamp.$lte = input.timestampEnd;
+      query.ts.$lte = input.timestampEnd;
     }
 
     return query;
@@ -134,22 +134,22 @@ export default class DeviationsMetadataDao {
    */
   static prepareQueryByIds(userId, deviationIds, input) {
     const query = {
-      userId,
-      deviationId: {
+      uid: userId,
+      eid: {
         $in: deviationIds,
       },
     };
 
     if (input.timestampBegin || input.timestampEnd) {
-      query.timestamp = {};
+      query.ts = {};
     }
 
     if (input.timestampBegin) {
-      query.timestamp.$gte = input.timestampBegin;
+      query.ts.$gte = input.timestampBegin;
     }
 
     if (input.timestampEnd) {
-      query.timestamp.$lte = input.timestampEnd;
+      query.ts.$lte = input.timestampEnd;
     }
 
     return query;

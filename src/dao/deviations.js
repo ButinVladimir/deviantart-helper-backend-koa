@@ -164,10 +164,10 @@ export default class DeviationsDao {
           publishedTime: 1,
           thumbnail: 1,
           nsfw: 1,
-          views: { $subtract: ['$periodEndData.views', '$periodBeginData.views'] },
-          favourites: { $subtract: ['$periodEndData.favourites', '$periodBeginData.favourites'] },
-          comments: { $subtract: ['$periodEndData.comments', '$periodBeginData.comments'] },
-          downloads: { $subtract: ['$periodEndData.downloads', '$periodBeginData.downloads'] },
+          views: { $subtract: ['$periodEndData.v', '$periodBeginData.v'] },
+          favourites: { $subtract: ['$periodEndData.f', '$periodBeginData.f'] },
+          comments: { $subtract: ['$periodEndData.c', '$periodBeginData.c'] },
+          downloads: { $subtract: ['$periodEndData.d', '$periodBeginData.d'] },
         },
       },
       {
@@ -206,10 +206,10 @@ export default class DeviationsDao {
       ...DeviationsDao.prepareStatisticsEndDataQuery(input),
       {
         $project: {
-          views: { $subtract: ['$periodEndData.views', '$periodBeginData.views'] },
-          favourites: { $subtract: ['$periodEndData.favourites', '$periodBeginData.favourites'] },
-          comments: { $subtract: ['$periodEndData.comments', '$periodBeginData.comments'] },
-          downloads: { $subtract: ['$periodEndData.downloads', '$periodBeginData.downloads'] },
+          views: { $subtract: ['$periodEndData.v', '$periodBeginData.v'] },
+          favourites: { $subtract: ['$periodEndData.f', '$periodBeginData.f'] },
+          comments: { $subtract: ['$periodEndData.c', '$periodBeginData.c'] },
+          downloads: { $subtract: ['$periodEndData.d', '$periodBeginData.d'] },
         },
       },
       {
@@ -292,10 +292,10 @@ export default class DeviationsDao {
       {
         $addFields: {
           periodBeginData: {
-            views: 0,
-            favourites: 0,
-            comments: 0,
-            downloads: 0,
+            v: 0,
+            f: 0,
+            c: 0,
+            d: 0,
           },
         },
       },
@@ -318,10 +318,10 @@ export default class DeviationsDao {
       {
         $addFields: {
           periodEndData: {
-            views: '$views',
-            favourites: '$favourites',
-            comments: '$comments',
-            downloads: '$downloads',
+            v: '$views',
+            f: '$favourites',
+            c: '$comments',
+            d: '$downloads',
           },
         },
       },
@@ -341,35 +341,35 @@ export default class DeviationsDao {
       {
         $lookup: {
           from: 'deviations_metadata',
-          let: { deviationId: '$_id' },
+          let: { eid: '$_id' },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
-                    { $eq: ['$deviationId', '$$deviationId'] },
-                    { $lte: ['$timestamp', timestamp] },
+                    { $eq: ['$eid', '$$eid'] },
+                    { $lte: ['$ts', timestamp] },
                   ],
                 },
               },
             },
             {
               $sort: {
-                timestamp: -1,
-              },
-            },
-            {
-              $project: {
-                timestamp: 1,
-                views: 1,
-                favourites: 1,
-                comments: 1,
-                downloads: 1,
-                _id: 0,
+                ts: -1,
               },
             },
             {
               $limit: 1,
+            },
+            {
+              $project: {
+                ts: 1,
+                v: 1,
+                f: 1,
+                c: 1,
+                d: 1,
+                _id: 0,
+              },
             },
           ],
           as: fieldName,
@@ -382,10 +382,10 @@ export default class DeviationsDao {
               if: { $gt: [{ $size: `$${fieldName}` }, 0] },
               then: { $arrayElemAt: [`$${fieldName}`, 0] },
               else: {
-                views: 0,
-                favourites: 0,
-                comments: 0,
-                downloads: 0,
+                v: 0,
+                f: 0,
+                c: 0,
+                d: 0,
               },
             },
           },
