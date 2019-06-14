@@ -71,8 +71,8 @@ export default class DeviationModelConverter {
     return {
       description: deviation.description,
       views: deviation.views,
-      comments: deviation.comments,
       favourites: deviation.favourites,
+      comments: deviation.comments,
       downloads: deviation.downloads,
     };
   }
@@ -97,8 +97,8 @@ export default class DeviationModelConverter {
     deviation.preview = dbObject.preview;
     deviation.description = dbObject.description;
     deviation.views = dbObject.views;
-    deviation.comments = dbObject.comments;
     deviation.favourites = dbObject.favourites;
+    deviation.comments = dbObject.comments;
     deviation.downloads = dbObject.downloads;
     deviation.nsfw = dbObject.nsfw;
 
@@ -117,8 +117,8 @@ export default class DeviationModelConverter {
 
     deviation.id = metadata.deviationId;
     deviation.views = metadata.views;
-    deviation.comments = metadata.comments;
     deviation.favourites = metadata.favourites;
+    deviation.comments = metadata.comments;
     deviation.downloads = metadata.downloads;
     deviation.description = metadata.description;
 

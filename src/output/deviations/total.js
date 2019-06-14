@@ -14,8 +14,8 @@ export default class DeviationsTotalOutput {
   static prepareOutput(deviation) {
     return {
       views: deviation.views,
-      comments: deviation.comments,
       favourites: deviation.favourites,
+      comments: deviation.comments,
       downloads: deviation.downloads,
     };
   }

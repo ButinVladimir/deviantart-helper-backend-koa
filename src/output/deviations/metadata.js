@@ -19,8 +19,8 @@ export default class DeviationsMetadataOutput {
       result[dm.deviationId].push([
         dm.timestamp,
         dm.views,
-        dm.comments,
         dm.favourites,
+        dm.comments,
         dm.downloads,
       ]);
     });

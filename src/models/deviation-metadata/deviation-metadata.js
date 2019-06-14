@@ -12,8 +12,8 @@ export default class DeviationMetadataModel {
     this.timestamp = 0;
     this.description = '';
     this.views = 0;
-    this.comments = 0;
     this.favourites = 0;
+    this.comments = 0;
     this.downloads = 0;
   }
 

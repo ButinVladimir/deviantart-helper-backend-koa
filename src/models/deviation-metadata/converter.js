@@ -38,8 +38,8 @@ export default class DeviationMetadataModelConverter {
       uid: deviationModel.userId,
       ts: deviationModel.timestamp,
       v: deviationModel.views,
-      c: deviationModel.comments,
       f: deviationModel.favourites,
+      c: deviationModel.comments,
       d: deviationModel.downloads,
     };
   }
@@ -58,8 +58,8 @@ export default class DeviationMetadataModelConverter {
     deviationMetadata.userId = dbObject.uid;
     deviationMetadata.timestamp = dbObject.ts;
     deviationMetadata.views = dbObject.v;
-    deviationMetadata.comments = dbObject.c;
     deviationMetadata.favourites = dbObject.f;
+    deviationMetadata.comments = dbObject.c;
     deviationMetadata.downloads = dbObject.d;
 
     return deviationMetadata;
