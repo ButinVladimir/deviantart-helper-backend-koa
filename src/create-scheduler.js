@@ -10,6 +10,7 @@ import SessionsDao from './dao/sessions';
 import UserDao from './dao/user';
 import DeviationsDao from './dao/deviations';
 import DeviationsMetadataDao from './dao/deviations-metadata';
+import DeviationsMetadataSumDao from './dao/deviations-metadata-sum';
 import TasksDao from './dao/tasks';
 
 import TaskFactory from './tasks/factory';
@@ -33,6 +34,7 @@ export default (db, config) => {
   const userDao = new UserDao(db);
   const deviationsDao = new DeviationsDao(db);
   const deviationsMetadataDao = new DeviationsMetadataDao(db);
+  const deviationsMetadataSumDao = new DeviationsMetadataSumDao(db);
   const tasksDao = new TasksDao(db);
 
   const taskFactory = new TaskFactory(
@@ -44,6 +46,7 @@ export default (db, config) => {
     userDao,
     deviationsDao,
     deviationsMetadataDao,
+    deviationsMetadataSumDao,
     config,
   );
   const taskScheduler = new TaskScheduler(tasksDao, taskFactory, config);

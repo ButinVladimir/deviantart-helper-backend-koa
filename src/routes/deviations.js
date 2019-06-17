@@ -269,6 +269,36 @@ export default (deviationsLogic, app) => {
       ctx.response.body = output;
     });
 
+  // /deviations/total-metadata
+  router.get(routes.DEVIATIONS_TOTAL_METADATA,
+    {
+      validate: {
+        query: {
+          timestampbegin: Joi
+            .number()
+            .integer()
+            .positive(),
+          timestampend: Joi
+            .number()
+            .integer()
+            .positive(),
+        },
+      },
+    },
+    authGuard,
+    async (ctx) => {
+      const input = new DeviationsTotalInput();
+      input.timestampBegin = ctx.query.timestampbegin || null;
+      input.timestampEnd = ctx.query.timestampend || null;
+
+      const output = await deviationsLogic.totalMetadata(
+        ctx.session.userId,
+        input,
+      );
+
+      ctx.response.body = output;
+    });
+
   router.prefix(routes.DEVIATIONS_PREFIX);
   app.use(router.middleware());
 };

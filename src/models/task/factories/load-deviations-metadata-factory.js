@@ -14,12 +14,14 @@ export default class LoadDeviationsMetadataTaskModelFactory extends BaseTaskMode
    *
    * @param {string} userId - User ID.
    * @param {string[]} deviationIds - Deviations IDs.
+   * @param {string} metadataSumId - The metadata sum ID.
    * @returns {TaskModel} TaskModel instance.
    */
-  static createModel(userId, deviationIds) {
+  static createModel(userId, deviationIds, metadataSumId) {
     const params = {
       userId,
-      deviationIds: Array.from(deviationIds),
+      deviationIds: [...deviationIds],
+      metadataSumId,
     };
 
     return super.createModelRaw(LOAD_DEVIATIONS_METADATA, params);

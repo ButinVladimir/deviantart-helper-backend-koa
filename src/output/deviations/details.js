@@ -29,13 +29,13 @@ export default class DeviationsDetailsOutput {
         nsfw: deviation.nsfw,
       },
       metadata: metadata
-        ? metadata.map(dm => ({
-          timestamp: dm.timestamp,
-          views: dm.views,
-          comments: dm.comments,
-          favourites: dm.favourites,
-          downloads: dm.downloads,
-        }))
+        ? metadata.map(dm => ([
+          dm.timestamp,
+          dm.views,
+          dm.comments,
+          dm.favourites,
+          dm.downloads,
+        ]))
         : null,
     };
   }

@@ -4,7 +4,6 @@ import DeviationModel from '../models/deviation/deviation';
 import DeviationModelConverter from '../models/deviation/converter';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsStatisticsInput from '../input/deviations/statistics';
-import DeviationsTotalInput from '../input/deviations/total';
 
 /**
  * Deviations DAO class.
@@ -187,47 +186,6 @@ export default class DeviationsDao {
     const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS).aggregate(query).toArray();
 
     return dbObjects.map(d => DeviationModelConverter.fromDbObject(d));
-  }
-
-  /**
-   * @description
-   * Fetches deviations total statistics by user ID and input.
-   *
-   * @param {string} userId - The user ID.
-   * @param {DeviationsTotalInput} input - The input.
-   * @returns {Promise<DeviationModel[]>} Count of deviations of user.
-   */
-  async getTotalStatisticsByUser(userId, input) {
-    const query = [
-      {
-        $match: DeviationsDao.prepareFetchQuery(userId, null),
-      },
-      ...DeviationsDao.prepareStatisticsBeginDataQuery(input),
-      ...DeviationsDao.prepareStatisticsEndDataQuery(input),
-      {
-        $project: {
-          views: { $subtract: ['$periodEndData.v', '$periodBeginData.v'] },
-          favourites: { $subtract: ['$periodEndData.f', '$periodBeginData.f'] },
-          comments: { $subtract: ['$periodEndData.c', '$periodBeginData.c'] },
-          downloads: { $subtract: ['$periodEndData.d', '$periodBeginData.d'] },
-        },
-      },
-      {
-        $group: {
-          _id: 1,
-          views: { $sum: '$views' },
-          favourites: { $sum: '$favourites' },
-          comments: { $sum: '$comments' },
-          downloads: { $sum: '$downloads' },
-        },
-      },
-    ];
-
-    const dbObjects = await this.db.collection(COLLECTION_DEVIATIONS).aggregate(query).toArray();
-
-    return dbObjects.length > 0
-      ? DeviationModelConverter.fromDbObject(dbObjects[0])
-      : new DeviationModel();
   }
 
   /**

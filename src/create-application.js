@@ -20,6 +20,7 @@ import SessionsDao from './dao/sessions';
 import UserDao from './dao/user';
 import DeviationsDao from './dao/deviations';
 import DeviationsMetadataDao from './dao/deviations-metadata';
+import DeviationsMetadataSumDao from './dao/deviations-metadata-sum';
 
 import SessionsLogic from './logic/sessions';
 import AuthLogic from './logic/auth';
@@ -86,6 +87,7 @@ export default (db, schedulerWorker, config) => {
     const userDao = new UserDao(db);
     const deviationsDao = new DeviationsDao(db);
     const deviationsMetadataDao = new DeviationsMetadataDao(db);
+    const deviationsMetadataSumDao = new DeviationsMetadataSumDao(db);
 
     const authLogic = new AuthLogic(authApi, sessionsDao, userDao, schedulerWorker, config);
     const userLogic = new UserLogic(userDao, schedulerWorker, config);
@@ -93,6 +95,7 @@ export default (db, schedulerWorker, config) => {
       userDao,
       deviationsDao,
       deviationsMetadataDao,
+      deviationsMetadataSumDao,
       config,
     );
 

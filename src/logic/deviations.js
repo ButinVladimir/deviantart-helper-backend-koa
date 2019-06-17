@@ -1,6 +1,8 @@
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
+import DeviationsMetadataSumDao from '../dao/deviations-metadata-sum';
+import DeviationsMetadataSumModel from '../models/deviation-metadata-sum/deviation-metadata-sum';
 import Config from '../config/config';
 import DeviationsBrowseInput from '../input/deviations/browse';
 import DeviationsDetailsInput from '../input/deviations/details';
@@ -12,6 +14,7 @@ import DeviationsDetailsOutput from '../output/deviations/details';
 import DeviationsMetadataOutput from '../output/deviations/metadata';
 import DeviationsStatisticsOutput from '../output/deviations/statistics';
 import DeviationsTotalOutput from '../output/deviations/total';
+import DeviationsMetadataSumOutput from '../output/deviations/metadata-sum';
 
 /**
  * Logic for deviations part.
@@ -24,12 +27,14 @@ export default class DeviationsLogic {
    * @param {UserDao} userDao - User DAO.
    * @param {DeviationsDao} deviationsDao - Deviations DAO.
    * @param {DeviationsMetadataDao} deviationsMetadataDao - Deviations metadata DAO.
+   * @param {DeviationsMetadataSumDao} deviationsMetadataSumDao - Deviations metadata sum DAO.
    * @param {Config} config - Config.
    */
-  constructor(userDao, deviationsDao, deviationsMetadataDao, config) {
+  constructor(userDao, deviationsDao, deviationsMetadataDao, deviationsMetadataSumDao, config) {
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
+    this.deviationsMetadataSumDao = deviationsMetadataSumDao;
     this.config = config;
   }
 
@@ -145,11 +150,42 @@ export default class DeviationsLogic {
    * @returns {Object} Deviations total statistics.
    */
   async totalStatistics(userId, input) {
-    const statistics = await this.deviationsDao.getTotalStatisticsByUser(
+    let metadataSumStart = null;
+
+    if (input.timestampBegin !== null) {
+      metadataSumStart = await this.deviationsMetadataSumDao.getLatestMetadataSum(
+        userId,
+        input.timestampBegin,
+      );
+    }
+
+    if (metadataSumStart === null) {
+      metadataSumStart = new DeviationsMetadataSumModel();
+    }
+
+    let metadataSumEnd = await this.deviationsMetadataSumDao.getLatestMetadataSum(
       userId,
-      input,
+      input.timestampEnd,
     );
 
-    return DeviationsTotalOutput.prepareOutput(statistics);
+    if (metadataSumEnd === null) {
+      metadataSumEnd = new DeviationsMetadataSumModel();
+    }
+
+    return DeviationsTotalOutput.prepareOutput(metadataSumStart, metadataSumEnd);
+  }
+
+  /**
+   * @description
+   * Fetches deviations metadata sum for user.
+   *
+   * @param {string} userId - The user ID.
+   * @param {DeviationsTotalInput} input - The input.
+   * @returns {Object} Metadata sum.
+   */
+  async totalMetadata(userId, input) {
+    const metadataSum = await this.deviationsMetadataSumDao.getByUser(userId, input);
+
+    return DeviationsMetadataSumOutput.prepareOutput(metadataSum);
   }
 }

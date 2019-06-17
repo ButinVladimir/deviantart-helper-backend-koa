@@ -62,7 +62,7 @@ export default class FetchDataTask extends BaseTask {
     await this.userDao.update(userInfo);
 
     return [
-      LoadDeviationsTaskModelFactory.createModel(this.userId, 0),
+      LoadDeviationsTaskModelFactory.createModel(this.userId, 0, null),
     ];
   }
 }

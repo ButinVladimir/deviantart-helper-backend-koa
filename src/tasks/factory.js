@@ -6,6 +6,7 @@ import SessionsDao from '../dao/sessions';
 import UserDao from '../dao/user';
 import DeviationsDao from '../dao/deviations';
 import DeviationsMetadataDao from '../dao/deviations-metadata';
+import DeviationsMetadataSumDao from '../dao/deviations-metadata-sum';
 import Config from '../config/config';
 import * as taskNames from '../consts/task-names';
 import TaskModel from '../models/task/task';
@@ -34,6 +35,7 @@ export default class TaskFactory {
    * @param {UserDao} userDao - The user DAO.
    * @param {DeviationsDao} deviationsDao - The deviations DAO.
    * @param {DeviationsMetadataDao} deviationsMetadataDao - The deviations metadata DAO.
+   * @param {DeviationsMetadataSumDao} deviationsMetadataSumDao - The deviations metadata sum DAO.
    * @param {Config} config - The config.
    */
   constructor(
@@ -45,6 +47,7 @@ export default class TaskFactory {
     userDao,
     deviationsDao,
     deviationsMetadataDao,
+    deviationsMetadataSumDao,
     config,
   ) {
     this.authApi = authApi;
@@ -55,6 +58,7 @@ export default class TaskFactory {
     this.userDao = userDao;
     this.deviationsDao = deviationsDao;
     this.deviationsMetadataDao = deviationsMetadataDao;
+    this.deviationsMetadataSumDao = deviationsMetadataSumDao;
     this.config = config;
   }
 
@@ -176,6 +180,7 @@ export default class TaskFactory {
       this.galleryApi,
       this.userDao,
       this.deviationsDao,
+      this.deviationsMetadataSumDao,
       this.config,
     );
   }
@@ -194,6 +199,7 @@ export default class TaskFactory {
       this.userDao,
       this.deviationsDao,
       this.deviationsMetadataDao,
+      this.deviationsMetadataSumDao,
       this.config,
     );
   }

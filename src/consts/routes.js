@@ -12,3 +12,4 @@ export const DEVIATIONS_DETAILS = '/details/:id';
 export const DEVIATIONS_METADATA = '/metadata';
 export const DEVIATIONS_STATISTICS = '/statistics/:page';
 export const DEVIATIONS_TOTAL = '/total';
+export const DEVIATIONS_TOTAL_METADATA = '/total-metadata';

@@ -29,18 +29,18 @@ export default class DeviationMetadataModelConverter {
    * @description
    * Converts DeviationMetadataModel to DB object.
    *
-   * @param {DeviationMetadataModel} deviationModel - DeviationMetadataModel instance.
+   * @param {DeviationMetadataModel} deviationMetadata - DeviationMetadataModel instance.
    * @returns {Object} DB object.
    */
-  static toDbObject(deviationModel) {
+  static toDbObject(deviationMetadata) {
     return {
-      eid: deviationModel.deviationId,
-      uid: deviationModel.userId,
-      ts: deviationModel.timestamp,
-      v: deviationModel.views,
-      f: deviationModel.favourites,
-      c: deviationModel.comments,
-      d: deviationModel.downloads,
+      eid: deviationMetadata.deviationId,
+      uid: deviationMetadata.userId,
+      ts: deviationMetadata.timestamp,
+      v: deviationMetadata.views,
+      f: deviationMetadata.favourites,
+      c: deviationMetadata.comments,
+      d: deviationMetadata.downloads,
     };
   }
 
