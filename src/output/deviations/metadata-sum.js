@@ -16,8 +16,8 @@ export default class DeviationsMetadataSumOutput {
       metadata: metadataSum.map(dms => [
         dms.timestamp,
         dms.views,
-        dms.comments,
         dms.favourites,
+        dms.comments,
         dms.downloads,
       ]),
     };
