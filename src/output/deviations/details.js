@@ -32,8 +32,8 @@ export default class DeviationsDetailsOutput {
         ? metadata.map(dm => ([
           dm.timestamp,
           dm.views,
-          dm.comments,
           dm.favourites,
+          dm.comments,
           dm.downloads,
         ]))
         : null,
