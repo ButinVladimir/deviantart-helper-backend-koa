@@ -1,7 +1,7 @@
 {
   "name": "deviantart-helper-backend-koa",
-  "version": "0.0.1",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,10 +18,10 @@
   },
   "author": "VladimirButin",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/VladimirButin/deviantart-helper-backend-koa#readme",
+  "homepage": "https://bitbucket.org/VladimirButin/deviantart-helper-backend-koa",
   "dependencies": {
     "@koa/cors": "^2.2.3",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "chalk": "^2.4.2",
     "grant-koa": "^4.5.0",
     "koa": "^2.7.0",
